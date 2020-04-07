@@ -8,7 +8,7 @@ plugins {
     id 'com.bmuschko.clover' version '2.2.3'
 }
 
-subprojects{
+subprojects {
     apply plugin: "java"
     apply plugin: "com.bmuschko.clover"
 
@@ -24,16 +24,16 @@ subprojects{
         testCompile "org.mockito:mockito-core:2.+"
     }
 
-    clover{
-				compiler{
-						additionalArgs = "-g:lines,source,vars"
-				}
+    clover {
+        compiler {
+            additionalArgs = "-g:lines,source,vars"
+        }
     }
 
     test{
-				useJUnitPlatform()
+        useJUnitPlatform()
 
-        testLogging{
+        testLogging {
             showStandardStreams = true
             exceptionFormat = 'full'
         }
@@ -41,17 +41,17 @@ subprojects{
 }
 
 // Project specific stuff
-project (':models'){
+project (':models') {
 
 }
 
-project (':server'){
+project (':server') {
     dependencies {
         implementation project(':models')
     }
 }
 
-project (':client'){
+project (':client') {
     dependencies {
         implementation project(':models')
     } 
