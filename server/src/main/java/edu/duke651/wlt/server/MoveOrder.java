@@ -12,7 +12,18 @@ public class MoveOrder extends Order {
         this.player = player;
         this.source = source;
         this.aim = aim;
-        this.numUnits = num;
+        if (source.getTerritoryUnits() >= num) {
+            this.source.reduceUnits(num);
+            this.numUnits = num;
+        }
+        else {
+            promptFail();
+            this.numUnits = 0;
+        }
+    }
+
+    private void promptFail() {
+        System.out.println("Move order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
     }
 
     public void execute() {
