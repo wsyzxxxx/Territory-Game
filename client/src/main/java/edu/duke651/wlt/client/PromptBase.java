@@ -1,5 +1,8 @@
 package edu.duke651.wlt.client;
 
+import edu.duke651.wlt.models.Player;
+import edu.duke651.wlt.models.Territory;
+
 public class PromptBase {
     GameController gameController ;
     PromptBase(){

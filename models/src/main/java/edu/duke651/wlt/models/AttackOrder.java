@@ -1,7 +1,5 @@
-package edu.duke651.wlt.server;
+package edu.duke651.wlt.models;
 
-import javax.swing.*;
-import java.awt.event.TextEvent;
 import java.util.Random;
 
 /**

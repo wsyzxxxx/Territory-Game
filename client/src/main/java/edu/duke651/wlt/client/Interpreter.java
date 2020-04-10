@@ -1,5 +1,7 @@
 package edu.duke651.wlt.client;
 
+import edu.duke651.wlt.models.*;
+
 import java.lang.management.PlatformLoggingMXBean;
 import java.util.Scanner;
 

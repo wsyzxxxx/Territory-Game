@@ -1,4 +1,4 @@
-package edu.duke651.wlt.server;
+package edu.duke651.wlt.models;
 
 /**
  * @program: wlt-risc

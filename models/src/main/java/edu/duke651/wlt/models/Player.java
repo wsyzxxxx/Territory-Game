@@ -1,7 +1,6 @@
-package edu.duke651.wlt.server;
+package edu.duke651.wlt.models;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
