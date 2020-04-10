@@ -37,7 +37,8 @@ public class MoveOrder extends Order {
         aim.increaseUnits(numUnits);
     }
 
-    private boolean checkLegal() {
+    @Override
+    public boolean checkLegal() {
         return player.checkReachable(source, aim) && source.getTerritoryUnits() >= numUnits;
     }
 

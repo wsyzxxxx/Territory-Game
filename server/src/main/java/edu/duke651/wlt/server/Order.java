@@ -15,5 +15,6 @@ public abstract class Order {
 
     //methods:
     abstract void execute();
+    abstract boolean checkLegal();
 
 }

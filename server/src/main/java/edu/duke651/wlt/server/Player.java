@@ -2,6 +2,7 @@ package edu.duke651.wlt.server;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @program: wlt-risc
@@ -12,17 +13,22 @@ import java.util.HashSet;
 public class Player {
     //fields:
     private String playerName;
-    private HashSet<Territory> territories;
+    private Map<String, Territory> territories;
 
+    //constructors
     public Player(String playerName) {
         this.playerName = playerName;
-        this.territories = new HashSet<>();
+    }
+
+    public Player(String playerName, Map<String, Territory> territories) {
+        this.playerName = playerName;
+        this.territories = territories;
     }
 //    private ArrayList<Order> orders; //this is to be sent to server.
 
     //methods:
     public void addTerritory(Territory t){
-        territories.add(t);
+        territories.put(t.getTerritoryName(), t);
     }
 
     public String getPlayerName() {
@@ -30,7 +36,26 @@ public class Player {
     }
 
     public void removeTerritory(Territory t) {
-        territories.remove(t);
+        territories.remove(t.getTerritoryName(), t);
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public Map<String, Territory> getTerritories() {
+        return territories;
+    }
+
+    /**
+     * @Description: This function updateTerritories is to replace existing territories with updatedList.
+     * @Param: [updatedList]
+     * @return: void
+     * @Author: Leo
+     * @Date: 2020/4/9
+     */
+    public void setTerritories(Map<String, Territory> territories) {
+        this.territories = territories;
     }
 
     void transferTerritory(Player aim, Territory t) {
@@ -47,17 +72,6 @@ public class Player {
     */
     void createOrder(Territory source, Territory aim, int num) {
 
-    }
-
-    /**
-    * @Description: This function updateTerritories is to replace existing territories with updatedList.
-    * @Param: [updatedList]
-    * @return: void
-    * @Author: Leo
-    * @Date: 2020/4/9
-    */
-    void updateTerritories(HashSet<Territory> updatedSet){
-        this.territories = updatedSet;
     }
 
     /**

@@ -57,7 +57,8 @@ public class AttackOrder extends Order {
         }
     }
 
-    private boolean checkLegal() {
+    @Override
+    public boolean checkLegal() {
         return source.checkNeighbor(aim) && !source.getTerritoryOwner().equals(aim.getTerritoryOwner()) && numUnits <= source.getTerritoryUnits();
     }
 
