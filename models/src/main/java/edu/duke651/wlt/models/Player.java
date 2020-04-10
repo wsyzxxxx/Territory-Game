@@ -1,5 +1,9 @@
 package edu.duke651.wlt.models;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -98,5 +102,31 @@ public class Player {
             source = toCheck.get(0);
         }
         return true;
+    }
+
+    public JSONObject serialize() {
+        JSONObject playerObject = new JSONObject();
+        playerObject.put("playerName", this.playerName);
+
+        JSONArray territoryList = new JSONArray();
+        this.territories.forEach((name, territory) -> {
+            JSONObject territoryObject = new JSONObject();
+            territoryObject.put("name", name);
+            territoryObject.put("unit", territory.getTerritoryUnits());
+            territoryList.put(territoryObject);
+        });
+        playerObject.put("territories", territoryList);
+
+        return playerObject;
+    }
+
+    public static Player deserialize(JSONObject playerObject, Map<String, Territory> territoryMap) throws JSONException {
+        Player player = new Player(playerObject.getString("playerName"));
+        playerObject.getJSONArray("territories").forEach(element -> {
+            player.addTerritory(territoryMap.get(element));
+            territoryMap.get(element).setTerritoryOwner(player);
+        });
+
+        return player;
     }
 }
