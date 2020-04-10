@@ -8,7 +8,7 @@ package edu.duke651.wlt.models;
  **/
 public class MoveOrder extends Order {
 
-    MoveOrder(Player player,Territory source, Territory aim, int num) {
+    public MoveOrder(Player player, Territory source, Territory aim, int num) {
         this.player = player;
         this.source = source;
         this.aim = aim;

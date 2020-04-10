@@ -16,7 +16,7 @@ public class Territory {
     private int territoryUnits;
     private Map<String, Territory> territoryNeighbors;
 
-    Territory(String territoryName) {
+    public Territory(String territoryName) {
         this.territoryName = territoryName;
         territoryUnits = 0;
     }

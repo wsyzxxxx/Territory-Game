@@ -13,29 +13,33 @@ public class PromptBase {
             "please input M for Move\n"+
             "please input A for Attack\n" +
             "please input N for end of this round\n";
-    String originalTerritoriesChoice_prompt = "Now choose your starting territory: ";
-    String endTerritoriesChoice_prompt = "Now choose your end territory: ";
-    String invalidAction_prompt = "Invalid action, please input again";
-    String invalidUnits_prompt = "Invalid unites, please input again";
+    String originalTerritoriesChoice_prompt = "Now choose your starting territory: \n";
+    String endTerritoriesChoice_prompt = "Now choose your target territory: \n";
+    String units_prompt= "Now input number of units: \n";
+    String invalidAction_prompt = "Invalid action, please input again\n";
+    String invalidUnits_prompt = "Invalid unites, please input again\n";
+    String invalidEndPlace_prompt = "Invalid aim place, please input agian";
+    String invalidAttackPlace_prompt = "Invalid attack place, please input agian";
     String largerUnits_prompt = "This territory do no contains so many units, please input again";
-    String invalidPlace_prompt = "Invalid place, please input again";
+    String invalidSourcePlace_prompt = "Invalid source place, please input again";
     String noMatchPlace_prompt = "You do not have the territory";
     String unReachablePlace_prompt = "The target territory is unreachable";
+    String endRound_prompt = "You choose to end the input order round\n";
 
     String getUnit_prompt(Territory territory){
-        return territory.getUnits() + " units in " + territory.getName();
+        return territory.getTerritoryUnits() + " units in " + territory.getTerritoryName();
     }
 
     String getNeighbor_prompt(Territory territory, TerritoryRelation territoryRelation) {
         String neighbor_prompt = " (next to: ";
         for(Territory t : territoryRelation.get(territory)){
-             neighbor_prompt += " "+ t.getName();
+             neighbor_prompt += " "+ t.getTerritoryName();
         }
         return neighbor_prompt + ")\n";
     }
 
     String getPlayerName_prompt(Player player){
-        return player.getName() + "\n";
+        return player.getPlayerName() + "\n";
     }
 
     String getTerritories_prompt(Player player, TerritoryRelation territoryRelation){
@@ -46,18 +50,13 @@ public class PromptBase {
         return t;
     }
 
-    String currMap_Prompt(TerritoryRelation territoryRelation){
+    String currMap_Prompt(TerritoryRelation territoryRelation, Player player){
         String init_territories = "";
         for(player : gameController.getPlayerList()){
             init_territories += getPlayerName_prompt(player) + "-------------";
             init_territories += getTerritories_prompt(player, territoryRelation);
         }
         return init_territories;
-    }
-
-    String showOrder(){
-
-        String a = "Your action is ";
     }
 
 }

@@ -2,84 +2,109 @@ package edu.duke651.wlt.client;
 
 import edu.duke651.wlt.models.*;
 
-import java.lang.management.PlatformLoggingMXBean;
 import java.util.Scanner;
 
 public class Interpreter {
-
-    Scanner scanner;
-
+    static Printer printer;
+    static Scanner scanner;
+    String source;
+    String aim;
+    String attackpPlace;
+    String unites;
     private static Interpreter instance = new Interpreter();
-    private Interpreter(){}
-    public static Interpreter getInstance(){
+    private Interpreter(){ }
+    public static Interpreter getInstance(Scanner s){
+        scanner = s;
+        printer = new Printer();
         return instance;
     }
-    Order getOrder(){
-        String action = getStringInput(scanner);
-        if(action.equals("N")) {
-            System.out.println("you choose do nothing in this round");//this may need another function in promptbase and printer
-            return null;
-        }else if(action.equals("M")) {
-            return getMove();
-        }else if(action.equals("A"){
-            return getAttack();
-        }
-    }
-    Territory getSource(Player player) throws Exception {
-        String source = getStringInput(scanner);
-        while(true){
-            if(isValidOriginalPlace(source, player)){
-                return player.getTerritories.get(source);
-            } else {
-                //here may need printer.
-                System.out.println("");
-            }
-        }
-    }
-    int getUnites(Player player) throws Exception {
-        String aim = getStringInput(scanner);
-        while(true){
-            if(isValidNums(aim, player)){
-                return Integer.parseInt(aim);
-            } else {
-                //here may need printer.
-                System.out.println("");
-            }
-        }
-    }
-    Territory getAim(Player player) throws Exception {
-        String aim = getStringInput(scanner);
-        while(true){
-            if(isValidEndPlace(aim, player)){
-                return player.getTerritories.get(aim);
-            } else {
-                //here may need printer.
-                System.out.println("");
-            }
-        }
-    }
-    AttackOrder getAttack(Player player) throws Exception {
 
-        new AttackOrder(player, getSource(player), getAim(player), getUnites(player));
+    Order getOrder(Player player){
+        //show the map? . no just show once , so need to be called in ClientController
+        printer.printActionChoice();
+        while(true){
+            String action = getStringInput(scanner);
+            if(isValidAction(action)){
+                if(action.equals("N")) {
+                    printer.printEndRound_prompt();//this may need another function in promptbase and printer
+                    return null;
+                }else if(action.equals("M")) {
+                    return getMove(player);
+                }else if(action.equals("A")) {
+                    return getAttack(player);
+                }
+            }else {
+                printer.printInvalidAction();
+            }
+        }
+    } // done now
+
+    Territory getSource(Player player) {
+        printer.printOriginalTerritoriesChoice();
+        while(true){
+            source = getStringInput(scanner);
+            if(isValidOriginalPlace(source, player)){
+                return player.getTerritories().get(source);
+            } else {
+                printer.printInvalidSourcePlace();
+            }
+        }
     }
-    MoveOrder getMove(){
-        new MoveOrder(player, getSource(player), getAim(player), getUnites(player));
+    int getUnites(Player player) {
+        printer.printUnits_prompt();
+        while(true){
+            unites = getStringInput(scanner);
+            if(isValidNums(unites, player)){
+                return Integer.parseInt(unites);
+            } else {
+                printer.printInvalidUnits();//this may need some change because judge of larger units situation
+            }
+        }
     }
+    Territory getAim(Player player) {
+        printer.printEndTerritoriesChoice();
+        while(true){
+            aim = getStringInput(scanner);
+            if(isValidEndPlace(aim, player)){
+                return player.getTerritories().get(aim);
+            } else {
+                //here may need printer.
+                printer.printInvalidEndPlace();
+            }
+        }
+    }
+    Territory getAttackPlace(Player player) {
+        printer.printEndTerritoriesChoice();
+        while(true){
+            attackpPlace = getStringInput(scanner);
+            if(isValidAttackPlace(attackpPlace, player)){
+                return player.getTerritories().get(attackpPlace);
+            } else {
+                //here may need printer.
+                printer.printInvalidAttackPlace();
+            }
+        }
+    }
+    AttackOrder getAttack(Player player) {
+        return new AttackOrder(player, getSource(player), getAttackPlace(player), getUnites(player));
+    }
+    MoveOrder getMove(Player player) {
+        return new MoveOrder(player, getSource(player), getAim(player), getUnites(player));
+    }
+
     String getStringInput(Scanner scanner){
-        String curInput = scanner.nextLine();
-        return curInput;
+        return scanner.nextLine();
     }
-    boolean isValidNums(String numsInput, Player player) throws Exception {
-        if(numsInput == "" || numsInput == null) {
-            throw new Exception("input invalid, please input again");
+
+    //not check larger or not
+    boolean isValidNums(String numsInput, Player player) {
+        if(numsInput.equals("")) {
+            System.out.println("input invalid, please input again");
             return false;
         }
         int i = nullifySpace(numsInput);
         numsInput = numsInput.substring(i);
-        if(isNumeric(numsInput)){
-            return true;
-        }
-        return false;
+        return isNumeric(numsInput);
     }
      boolean isNumeric(String str) {
         for (int i = 0; i < str.length(); i++) {
@@ -91,59 +116,64 @@ public class Interpreter {
         return true;
     }
 
-    boolean isValidAttackPlace(String placeInput, Player player) throws Exception {
-        if(placeInput == "" || placeInput == null) {
-            throw new Exception("input invalid, please input again");
+    boolean isValidAttackPlace(String placeInput, Player player) {
+        if(placeInput.equals("")) {
             return false;
         }
         int i = nullifySpace(placeInput);
         placeInput = placeInput.substring(i);
-        if(checkReachable()) {
-            if(player.territories.containsKey(placeInput)) {
-                System.out.println("you attack ur own territory");
-                return false;
-            }
+        //
+        if(player.getTerritories().containsKey(placeInput)) {
+            System.out.println("you attack ur own territory");
+            return false;
+        } else if(player.checkReachable(player.getTerritories().get(source), player.getTerritories().get(placeInput))) {
             return true;
         } else {
-            throw new Exception("input invalid, please input again");
+            return false;
         }
     }
-    boolean isValidEndPlace(String placeInput, Player player) throws Exception{
-        if(placeInput == "" || placeInput == null) {
-            throw new Exception("input invalid, please input again");
+    //done now,
+    boolean isValidEndPlace(String placeInput, Player player){
+        if(placeInput.equals("")) {
+            System.out.println("input invalid, please input again");
             return false;
         }
         int i = nullifySpace(placeInput);
         placeInput = placeInput.substring(i);
         //next, check the place, original place
-        if(player.territories.containsKey(placeInput)) {
-            return checkReachable();
+        if(player.getTerritories().containsKey(placeInput)) {
+            return player.checkReachable(player.getTerritories().get(source), player.getTerritories().get(placeInput));
         } else{
-            throw new Exception("invalid input of place");
-        }
-    }
-    boolean isValidOriginalPlace(String placeInput, Player player) throws Exception {
-        if(placeInput == "" || placeInput == null) {
-            throw new Exception("input invalid, please input again");
+            System.out.println("invalid input of place");
             return false;
         }
-        int i = nullifySpace(placeInput);
-        placeInput = placeInput.substring(i);
-        //next, check the place, original place
-        if(player.territories.containsKey(placeInput)){
-            return true;
-        }
-        throw new Exception("invalid input of place");
     }
 
-    boolean isValidAction(String actioninput, Player player) throws Exception {
+    //done by now
+    boolean isValidOriginalPlace(String placeInput, Player player) {
+        if(placeInput.equals("")) {
+            System.out.println("input invalid, please input again");
+            return false;
+        }
+        int i = nullifySpace(placeInput);
+        placeInput = placeInput.substring(i);
+
+        if(player.getTerritories().containsKey(placeInput)){
+            return true;
+        }
+        System.out.println("invalid input of place");
+        return false;
+    }
+
+    //done for now
+    boolean isValidAction(String actioninput){
         if(actioninput == null){
-            throw new Exception("input invalid, please input again");
+            System.out.println("input invalid, please input again");
             return false;
         }
         int i = nullifySpace(actioninput);
         if(actioninput.charAt(i) != 'M' || actioninput.charAt(i) != 'A'|| actioninput.charAt(i) != 'N'){
-            throw new Exception("input invalid, please input again");
+            System.out.println("input invalid, please input again");
             return false;
         }
         return true;
