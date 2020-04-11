@@ -11,12 +11,7 @@ import java.util.Map;
  * @create: 2020-04-09 12:15
  **/
 public class MoveOrder extends Order {
-
-<<<<<<< HEAD
     public MoveOrder(Player player, Territory source, Territory aim, int num) {
-=======
-    public MoveOrder(Player player,Territory source, Territory aim, int num) {
->>>>>>> adf0c466f6c79205bbd154ca374fecfe4ba6823b
         this.player = player;
         this.source = source;
         this.aim = aim;
