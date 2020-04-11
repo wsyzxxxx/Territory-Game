@@ -19,7 +19,14 @@ public class ServerHandler {
 
     public ServerHandler() throws IOException {
         this.linkInfo = new LinkInfo(new Socket(ServerSetting.HOST, ServerSetting.PORT));
-        this.linkInfo.setPlayerName(this.linkInfo.readMessage());
+        this.linkInfo.setPlayerName("server");
+    }
+
+    public void sendSelection(Player player) {
+        JSONObject messageJSON = new JSONObject();
+        messageJSON.put("status", SUCCESS);
+        messageJSON.put("data", player.serialize());
+        linkInfo.sendMessage(messageJSON.toString());
     }
 
     public void sendOrders(ArrayList<Order> orders) {
@@ -32,9 +39,11 @@ public class ServerHandler {
         linkInfo.sendMessage(messageJSON.toString());
     }
 
-    public void getResults(Map<String, Player> playerMap, Map<String, Territory> territoryMap) throws IOException, JSONException {
+    public void getResults(Map<String, Player> playerMap, Map<String, Territory> territoryMap) throws IOException, JSONException, IllegalArgumentException, IllegalStateException {
         JSONObject resultObject = new JSONObject(linkInfo.readMessage());
-        if (!resultObject.getString("status").equals("success") && !resultObject.getString("status").equals("finish")) {
+        if (resultObject.getString("status").equals("finish")) {
+            throw new IllegalStateException(resultObject.getJSONObject("data").getString("winner"));
+        } else if (!resultObject.getString("status").equals("success")) {
             throw new IllegalArgumentException("Network error with server");
         }
 
