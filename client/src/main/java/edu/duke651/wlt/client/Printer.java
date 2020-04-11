@@ -3,6 +3,7 @@ package edu.duke651.wlt.client;
 import edu.duke651.wlt.models.Player;
 import edu.duke651.wlt.models.Territory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -51,9 +52,7 @@ public class Printer {
     public void printInputNothing(){
         System.out.println("input nothing, please input again");
     }
-    public void printSelectTerritories_Prompt(){
-        System.out.println(promptBase.selectTerritories_prompt);
-    }
+
     public void printCurrMapWithoutPlayer(Map<String, Territory> territoryMap){
         System.out.println(promptBase.currMap_Prompt_WithoutPlayer(territoryMap));
     }
@@ -68,5 +67,18 @@ public class Printer {
     }
     public void printCurrTerritories_Prompt(Player player){
         System.out.println(promptBase.currTerritories_Prompt(player));
+    }
+
+    public void printPlayerResult_Prompt(Player player, Map<String, Territory> territoryMap){
+        String tmp = promptBase.playerResult_Prompt(player, territoryMap);
+        if(tmp == null) {
+            System.out.println("the game is still going on");
+        } else {
+            System.out.println(tmp);
+        }
+    }
+    public void printSelectTerritories_Prompt(Player player, Map<String, ArrayList<Territory>> territoryGroup){
+        String a = promptBase.selectTerritories_prompt(player, territoryGroup);
+        System.out.println(a);
     }
 }

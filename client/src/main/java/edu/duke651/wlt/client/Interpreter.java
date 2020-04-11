@@ -2,6 +2,7 @@ package edu.duke651.wlt.client;
 
 import edu.duke651.wlt.models.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -20,8 +21,31 @@ public class Interpreter {
         return instance;
     }
 
+    public void getGroupSelection(Player player, Map<String, ArrayList<Territory>> territoryGroup) {
+        if(territoryGroup.isEmpty()){
+            System.out.println("No more territories group to choose!");
+            return;
+        }
+        //printer.printCurrMapWithoutPlayer(territoryMap); for now there is no need,
+        printer.printSelectTerritories_Prompt(player, territoryGroup);
+
+        while(true) {
+            String key = getStringInput(scanner);
+            if (territoryGroup.containsKey(key)) {
+                printer.printTerritoryChoice_prompt();//may need call territory's name
+                for(Territory territory : territoryGroup.get(key)){
+                    territory.setTerritoryOwner(player);
+                }
+                territoryGroup.remove(key);
+            } else {
+                printer.printInvalidChoice_prompt();
+            }
+        }
+    }
+    /*
+    this function is used for choose territory one by one by player.
     public void getSelection(Player player, Map<String, Territory> territoryMap){
-        if(territoryMap == null){
+        if(territoryMap.isEmpty()){
             System.out.println("No more territories to choose!");
             return;
         }
@@ -39,6 +63,8 @@ public class Interpreter {
             }
         }
     }
+
+     */
     public Order getOrder(Player player){
         //show the map? . no just show once , so need to be called in ClientController
         printer.printActionChoice();

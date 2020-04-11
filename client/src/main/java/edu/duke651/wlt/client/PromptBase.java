@@ -3,12 +3,28 @@ package edu.duke651.wlt.client;
 import edu.duke651.wlt.models.Player;
 import edu.duke651.wlt.models.Territory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
 public class PromptBase {
     public PromptBase(){ }
-    String selectTerritories_prompt = "Now select your three territories: \n";
+    String territoryGroupName(String key,Map<String, ArrayList<Territory>> territoryGroup){
+        ArrayList<Territory> t = territoryGroup.get(key);
+        String init = " ";
+        for(Territory territory:t){
+            init += territory.getTerritoryName() + " \n";
+        }
+        return init;
+    }
+
+    public String selectTerritories_prompt(Player player, Map<String, ArrayList<Territory>> territoryGroup){
+        return "Now select your three territories: \n" +
+                "please input 1 for Group1:\n"+ territoryGroupName("1", territoryGroup) +
+                "please input 2 for Group2\n" + territoryGroupName("2", territoryGroup) +
+                "please input 3 for Group3\n" + territoryGroupName("3", territoryGroup);
+    }
+
 
     String actionChoice_prompt = "Now choose your action:\n" +
             "please input M for Move\n"+
@@ -27,9 +43,9 @@ public class PromptBase {
     String unReachablePlace_prompt = "The target territory is unreachable";
     String endRound_prompt = "You choose to end the input order round\n";
 
-    String territoryChoice_prompt = "Congratulations! You become the owner of this territory!\n";
+    String territoryChoice_prompt = "Congratulations! You become the owner of this territory group!\n";
     String finishSelection_prompt = "Now you have three territories, selection complete!\n";
-    String invalidChoice_prompt =   "Invalid input, do not contain this territory or this territory has been taken! Please input again!\n";
+    String invalidChoice_prompt =   "Invalid input, do not contain this territory Group or this territory Group has been taken! Please input again!\n";
     //server for currMap_Prompt
     String getUnit_prompt(Territory territory){
         return territory.getTerritoryUnits() + " units in " + territory.getTerritoryName();
@@ -77,6 +93,15 @@ public class PromptBase {
             init_territories += territory.getTerritoryName();
         }
         return init_territories + "\n";
+    }
+
+    String playerResult_Prompt(Player player, Map<String, Territory> territoryMap){
+        if(player.getTerritories().isEmpty()) {
+            return player.getPlayerName() + " , you lose.\n";
+        } else if (territoryMap.size() == player.getTerritories().size()){
+            return player.getPlayerName() + " , you win.\n";
+        }
+        return null;//
     }
 
 }
