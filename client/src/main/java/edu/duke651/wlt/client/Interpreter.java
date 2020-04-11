@@ -2,6 +2,7 @@ package edu.duke651.wlt.client;
 
 import edu.duke651.wlt.models.*;
 
+import java.util.Map;
 import java.util.Scanner;
 
 public class Interpreter {
@@ -9,7 +10,7 @@ public class Interpreter {
     static Scanner scanner;
     String source;
     String aim;
-    String attackpPlace;
+    String attackPlace;
     String unites;
     private static Interpreter instance = new Interpreter();
     private Interpreter(){ }
@@ -19,7 +20,26 @@ public class Interpreter {
         return instance;
     }
 
-    Order getOrder(Player player){
+    public void getSelection(Player player, Map<String, Territory> territoryMap){
+        if(territoryMap == null){
+            System.out.println("No more territories to choose!");
+            return;
+        }
+        printer.printSelectTerritories_Prompt();
+        printer.printCurrMapWithoutPlayer(territoryMap);
+
+        String territoryName = getStringInput(scanner);
+        while(true) {
+            if (territoryMap.containsKey(territoryName)) {
+                printer.printTerritoryChoice_prompt();//may need call territory's name
+                territoryMap.get(territoryName).setTerritoryOwner(player);
+                territoryMap.remove(territoryName);
+            } else {
+                printer.printInvalidChoice_prompt();
+            }
+        }
+    }
+    public Order getOrder(Player player){
         //show the map? . no just show once , so need to be called in ClientController
         printer.printActionChoice();
         while(true){
@@ -54,8 +74,13 @@ public class Interpreter {
         printer.printUnits_prompt();
         while(true){
             unites = getStringInput(scanner);
-            if(isValidNums(unites, player)){
-                return Integer.parseInt(unites);
+            if(isValidNums(unites)){
+                int output = Integer.parseInt(unites);
+                if(player.getTerritories().get(source).getTerritoryUnits() < output) {
+                    printer.printLargerUnits();
+                } else {
+                    return output;
+                }
             } else {
                 printer.printInvalidUnits();//this may need some change because judge of larger units situation
             }
@@ -76,9 +101,9 @@ public class Interpreter {
     Territory getAttackPlace(Player player) {
         printer.printEndTerritoriesChoice();
         while(true){
-            attackpPlace = getStringInput(scanner);
-            if(isValidAttackPlace(attackpPlace, player)){
-                return player.getTerritories().get(attackpPlace);
+            attackPlace = getStringInput(scanner);
+            if(isValidAttackPlace(attackPlace, player)){
+                return player.getTerritories().get(attackPlace);
             } else {
                 //here may need printer.
                 printer.printInvalidAttackPlace();
@@ -97,9 +122,9 @@ public class Interpreter {
     }
 
     //not check larger or not
-    boolean isValidNums(String numsInput, Player player) {
+    boolean isValidNums(String numsInput) {
         if(numsInput.equals("")) {
-            printer.printInvalidUnits();
+            printer.printInputNothing();
             return false;
         }
 
@@ -119,33 +144,40 @@ public class Interpreter {
 
     boolean isValidAttackPlace(String placeInput, Player player) {
         if(placeInput.equals("")) {
+            printer.printInputNothing();
             return false;
         }
         int i = nullifySpace(placeInput);
         placeInput = placeInput.substring(i);
         //
         if(player.getTerritories().containsKey(placeInput)) {
-            System.out.println("you attack ur own territory");
+            System.out.println("you cannot attack ur own territory! Please input again");
             return false;
-        } else if(player.checkReachable(player.getTerritories().get(source), player.getTerritories().get(placeInput))) {
+        } else if(player.getTerritories().get(source).checkNeighbor(player.getTerritories().get(placeInput))) {
             return true;
         } else {
+            printer.printUnreachablePlace();
             return false;
         }
     }
     //done now,
     boolean isValidEndPlace(String placeInput, Player player){
         if(placeInput.equals("")) {
-            System.out.println("input invalid, please input again");
+            printer.printInputNothing();
             return false;
         }
         int i = nullifySpace(placeInput);
         placeInput = placeInput.substring(i);
-        //next, check the place, original place
+
         if(player.getTerritories().containsKey(placeInput)) {
-            return player.checkReachable(player.getTerritories().get(source), player.getTerritories().get(placeInput));
+            if (player.checkReachable(player.getTerritories().get(source), player.getTerritories().get(placeInput))){
+                return true;
+            } else {
+                printer.printUnreachablePlace();
+                return false;
+            }
         } else{
-            System.out.println("invalid input of place");
+            printer.printNoMatchPlace();
             return false;
         }
     }
@@ -153,7 +185,7 @@ public class Interpreter {
     //done by now
     boolean isValidOriginalPlace(String placeInput, Player player) {
         if(placeInput.equals("")) {
-            System.out.println("input invalid, please input again");
+            printer.printInputNothing();
             return false;
         }
         int i = nullifySpace(placeInput);
@@ -162,23 +194,20 @@ public class Interpreter {
         if(player.getTerritories().containsKey(placeInput)){
             return true;
         }
-        System.out.println("invalid input of place");
+        printer.printNoMatchPlace();
         return false;
     }
 
     //done for now
     boolean isValidAction(String actioninput){
         if(actioninput == null){
-            System.out.println("input invalid, please input again");
+            printer.printInputNothing();
             return false;
         }
         int i = nullifySpace(actioninput);
-        if(actioninput.charAt(i) != 'M' || actioninput.charAt(i) != 'A'|| actioninput.charAt(i) != 'N'){
-            System.out.println("input invalid, please input again");
-            return false;
-        }
-        return true;
+        return actioninput.charAt(i) == 'M' && actioninput.charAt(i) == 'A' && actioninput.charAt(i) == 'N';
     }
+    //this function may not so useful
     int nullifySpace(String input){
         int i = 0;
         while(input.charAt(i) == ' ') {

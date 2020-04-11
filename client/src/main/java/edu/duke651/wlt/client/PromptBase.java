@@ -3,11 +3,12 @@ package edu.duke651.wlt.client;
 import edu.duke651.wlt.models.Player;
 import edu.duke651.wlt.models.Territory;
 
+import java.util.Collection;
+import java.util.Map;
+
 public class PromptBase {
-    GameController gameController ;
-    PromptBase(){
-        gameController = new GameController(){};
-    }
+    public PromptBase(){ }
+    String selectTerritories_prompt = "Now select your three territories: \n";
 
     String actionChoice_prompt = "Now choose your action:\n" +
             "please input M for Move\n"+
@@ -25,6 +26,10 @@ public class PromptBase {
     String noMatchPlace_prompt = "You do not have the territory";
     String unReachablePlace_prompt = "The target territory is unreachable";
     String endRound_prompt = "You choose to end the input order round\n";
+
+    String territoryChoice_prompt = "Congratulations! You become the owner of this territory!\n";
+    String finishSelection_prompt = "Now you have three territories, selection complete!\n";
+    String invalidChoice_prompt =   "Invalid input, do not contain this territory or this territory has been taken! Please input again!\n";
     //server for currMap_Prompt
     String getUnit_prompt(Territory territory){
         return territory.getTerritoryUnits() + " units in " + territory.getTerritoryName();
@@ -50,13 +55,28 @@ public class PromptBase {
         return t;
     }
 
-    String currMap_Prompt(){
+    String currMap_Prompt(Collection<Player> players){
         String init_territories = "";
-        for(player : gameController.getPlayerList()){
+        for(Player player : players){
             init_territories += getPlayerName_prompt(player) + "-------------";
-            init_territories += getTerritories_prompt(player);
+            init_territories += getTerritories_prompt(player); // omniscient Will mark!
         }
         return init_territories;
+    }
+
+    String currMap_Prompt_WithoutPlayer(Map<String, Territory> territoryMap){
+        String init_territories = "The available territories are listed as following\n";
+        for(Territory territory: territoryMap.values()){
+            init_territories += territory.getTerritoryName() + getNeighbor_prompt(territory); // omniscient Will mark!
+        }
+        return init_territories;
+    }
+    String currTerritories_Prompt(Player player){
+        String init_territories = "Your territories are:\n";
+        for(Territory territory:player.getTerritories().values()){
+            init_territories += territory.getTerritoryName();
+        }
+        return init_territories + "\n";
     }
 
 }
