@@ -14,15 +14,15 @@ public class Interpreter {
     public static Interpreter getInstance(){
         return instance;
     }
-    Order getOrder(){
+    Order getOrder(Player player) throws Exception {
         String action = getStringInput(scanner);
         if(action.equals("N")) {
             System.out.println("you choose do nothing in this round");//this may need another function in promptbase and printer
             return null;
         }else if(action.equals("M")) {
-            return getMove();
+            return getMove(player);
         }else if(action.equals("A"){
-            return getAttack();
+            return getAttack(player);
         }
     }
     Territory getSource(Player player) throws Exception {
@@ -59,10 +59,9 @@ public class Interpreter {
         }
     }
     AttackOrder getAttack(Player player) throws Exception {
-
         new AttackOrder(player, getSource(player), getAim(player), getUnites(player));
     }
-    MoveOrder getMove(){
+    MoveOrder getMove(Player player) throws Exception {
         new MoveOrder(player, getSource(player), getAim(player), getUnites(player));
     }
     String getStringInput(Scanner scanner){
