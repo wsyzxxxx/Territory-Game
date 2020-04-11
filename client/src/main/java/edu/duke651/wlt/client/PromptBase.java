@@ -3,12 +3,9 @@ package edu.duke651.wlt.client;
 import edu.duke651.wlt.models.Player;
 import edu.duke651.wlt.models.Territory;
 
-public class PromptBase {
-    GameController gameController ;
-    PromptBase(){
-        gameController = new GameController(){};
-    }
+import java.util.Collection;
 
+public class PromptBase {
     String actionChoice_prompt = "Now choose your action:\n" +
             "please input M for Move\n"+
             "please input A for Attack\n" +
@@ -50,9 +47,9 @@ public class PromptBase {
         return t;
     }
 
-    String currMap_Prompt(){
+    String currMap_Prompt(Collection<Player> players) {
         String init_territories = "";
-        for(player : gameController.getPlayerList()){
+        for(Player player : players){
             init_territories += getPlayerName_prompt(player) + "-------------";
             init_territories += getTerritories_prompt(player);
         }

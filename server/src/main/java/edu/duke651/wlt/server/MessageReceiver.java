@@ -36,7 +36,8 @@ public class MessageReceiver {
 
     public Player receiveSelection(LinkInfo linkInfo, Map<String, Territory> territoryMap) throws IOException {
         JSONObject selectionObject = new JSONObject(linkInfo.readMessage());
-        if (!selectionObject.getString("status").equals("success")) {
+        if (!selectionObject.getString("status").equals("success") ||
+             selectionObject.getJSONObject("data").getJSONArray("territories").length() != territoryMap.keySet().size()) {
             throw new IllegalArgumentException("Network error with player " + linkInfo.getPlayerName());
         }
 
@@ -48,6 +49,7 @@ public class MessageReceiver {
             }
             territoryMap.get(((JSONObject)element).getString("name")).setTerritoryUnits(((JSONObject)element).getInt("units"));
             player.addTerritory(territoryMap.get(((JSONObject)element).getString("name")));
+            territoryMap.remove(((JSONObject)element).getString("name"));
         });
 
         return player;
