@@ -6,6 +6,7 @@ import edu.duke651.wlt.models.Territory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class MessageSender {
@@ -50,5 +51,18 @@ public class MessageSender {
 
         //send the results
         playerLinkInfoMap.forEach((player, linkInfo) -> linkInfo.sendMessage(messageJSON.toString()));
+    }
+
+    public void sendTerritoryList(LinkInfo linkInfo, Collection<Territory> territories) {
+        JSONObject messageJSON = new JSONObject();
+        messageJSON.put("status", SUCCESS);
+
+        //territoryList
+        JSONArray territoryList = new JSONArray();
+        territories.forEach(territory -> territoryList.put(territory.serialize()));
+        messageJSON.put("territoryList", territoryList);
+
+        //send the results
+        linkInfo.sendMessage(messageJSON.toString());
     }
 }
