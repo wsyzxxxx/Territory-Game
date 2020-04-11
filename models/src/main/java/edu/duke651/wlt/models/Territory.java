@@ -23,12 +23,12 @@ public class Territory {
 
     public Territory(String territoryName) {
         this.territoryName = territoryName;
-        this.territoryUnits = 0;
+        this.territoryUnits = 10;
     }
 
     public Territory(String name, HashMap<String, Territory> neighbors) {
         this.territoryName = name;
-        this.territoryUnits = 0;
+        this.territoryUnits = 10;
         this.territoryNeighbors = neighbors;
     }
 
