@@ -1,4 +1,8 @@
-package edu.duke651.wlt.models;
+package edu.duke651.wlt.server;
+
+import edu.duke651.wlt.models.Player;
+import edu.duke651.wlt.models.Territory;
+import edu.duke651.wlt.models.TerritoryMapInit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +19,37 @@ public class GameController {
 
     public GameController() {
         territoryMapInit();
+        assignTerritory();
+    }
+
+    private void gameOver() {
+        //Todo
+    }
+
+    private void gameStart() {
+        while(!isGameOver()) {
+            takeTurn();
+            deletePlayers();
+        }
+
+    }
+
+    private void takeTurn() {
+        //TODO
+    }
+
+    private void deletePlayers() {
+        for (Player player : players.values()) {
+            if (player.checkLose()) players.remove(player.getPlayerName());
+        }
+    }
+
+    private boolean isGameOver() {
+        return players.size() == 1;
+    }
+
+    private void assignTerritory() {
+        //TODO
     }
 
     private void territoryMapInit() {

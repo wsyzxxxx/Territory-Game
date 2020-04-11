@@ -43,7 +43,7 @@ public class AttackOrder extends Order {
             }
             if (defendUnits == 0) {
                 aim.setTerritoryUnits(attackUnits);
-                aim.setTerritoryOwner(player);
+                aim.getTerritoryOwner().transferTerritory(player, aim);
                 break;
             }
             int attackDice = dice.nextInt(20);
