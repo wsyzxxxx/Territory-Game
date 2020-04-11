@@ -18,6 +18,10 @@ public class MessageReceiver {
 
         ArrayList<Order> orderList = new ArrayList<>();
         turnObject.getJSONArray("data").forEach(element -> {
+            if (!((JSONObject)element).getString("player").equals(linkInfo.getPlayerName())) {
+                throw new IllegalArgumentException("Wrong order type with player " + linkInfo.getPlayerName());
+            }
+
             if (((JSONObject)element).getString("type").equals("move")) {
                 orderList.add(MoveOrder.deserialize((JSONObject)element, playerMap, territoryMap));
             } else if (((JSONObject)element).getString("type").equals("attack")) {
@@ -30,5 +34,22 @@ public class MessageReceiver {
         return orderList;
     }
 
+    public Player receiveSelection(LinkInfo linkInfo, Map<String, Territory> territoryMap) throws IOException {
+        JSONObject selectionObject = new JSONObject(linkInfo.readMessage());
+        if (!selectionObject.getString("status").equals("success")) {
+            throw new IllegalArgumentException("Network error with player " + linkInfo.getPlayerName());
+        }
 
+        Player player = new Player(selectionObject.getJSONObject("data").getString("playerName"));
+        linkInfo.setPlayerName(player.getPlayerName());
+        selectionObject.getJSONObject("data").getJSONArray("territories").forEach(element -> {
+            if (!territoryMap.containsKey(((JSONObject)element).getString("name"))) {
+                throw new IllegalArgumentException("Wrong selection with player " + player.getPlayerName());
+            }
+            territoryMap.get(((JSONObject)element).getString("name")).setTerritoryUnits(((JSONObject)element).getInt("units"));
+            player.addTerritory(territoryMap.get(((JSONObject)element).getString("name")));
+        });
+
+        return player;
+    }
 }
