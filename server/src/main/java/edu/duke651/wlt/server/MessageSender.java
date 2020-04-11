@@ -1,7 +1,12 @@
 package edu.duke651.wlt.server;
 
 import edu.duke651.wlt.models.LinkInfo;
+import edu.duke651.wlt.models.Player;
+import edu.duke651.wlt.models.Territory;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class MessageSender {
     private static final String FINISH = "finish";
@@ -27,5 +32,23 @@ public class MessageSender {
         messageJSON.put("status", SUCCESS);
         messageJSON.put("data", dataObject);
         linkInfo.sendMessage(messageJSON.toString());
+    }
+
+    public void sendResults(Map<Player, LinkInfo> playerLinkInfoMap, Map<String, Territory> territoryMap) {
+        JSONObject messageJSON = new JSONObject();
+        messageJSON.put("status", SUCCESS);
+
+        //territoryList
+        JSONArray territoryList = new JSONArray();
+        territoryMap.forEach((name, territory) -> territoryList.put(territory.serialize()));
+        messageJSON.put("territoryList", territoryList);
+
+        //playerList
+        JSONArray playerWithTerritoryList = new JSONArray();
+        playerLinkInfoMap.forEach((player, linkInfo) -> playerWithTerritoryList.put(player.serialize()));
+        messageJSON.put("playerList", playerWithTerritoryList);
+
+        //send the results
+        playerLinkInfoMap.forEach((player, linkInfo) -> linkInfo.sendMessage(messageJSON.toString()));
     }
 }

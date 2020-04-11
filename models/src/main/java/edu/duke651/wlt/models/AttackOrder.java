@@ -1,5 +1,8 @@
 package edu.duke651.wlt.models;
 
+import org.json.JSONObject;
+
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -10,10 +13,15 @@ import java.util.Random;
  **/
 public class AttackOrder extends Order {
 
+<<<<<<< HEAD
     public AttackOrder(Player player, Territory source, Territory aim, int num) {
+=======
+    public AttackOrder(Player player,Territory source, Territory aim, int num) {
+>>>>>>> adf0c466f6c79205bbd154ca374fecfe4ba6823b
         this.player = player;
         this.source = source;
         this.aim = aim;
+        this.type = "attack";
         if (source.getTerritoryUnits() >= num) {
             this.source.reduceUnits(num);
             this.numUnits = num;
@@ -26,12 +34,6 @@ public class AttackOrder extends Order {
 
     private void promptFail() {
         System.out.println("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
-    }
-
-    public void execute() {
-        if (checkLegal())
-            runOrder();
-
     }
 
     private void runOrder() {
@@ -56,9 +58,20 @@ public class AttackOrder extends Order {
     }
 
     @Override
+    public void execute() {
+        if (checkLegal())
+            runOrder();
+    }
+
+    @Override
     public boolean checkLegal() {
         return source.checkNeighbor(aim) && !source.getTerritoryOwner().equals(aim.getTerritoryOwner()) && numUnits <= source.getTerritoryUnits();
     }
 
-
+    public static AttackOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
+        return new AttackOrder(playerMap.get(moveObject.getString("player")),
+                territoryMap.get(moveObject.getString("source")),
+                territoryMap.get(moveObject.getString("aim")),
+                moveObject.getInt("num"));
+    }
 }

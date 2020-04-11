@@ -1,5 +1,9 @@
 package edu.duke651.wlt.models;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -18,10 +22,10 @@ public class Territory {
 
     public Territory(String territoryName) {
         this.territoryName = territoryName;
-        territoryUnits = 0;
+        this.territoryUnits = 0;
     }
 
-    Territory(String name, Map<String, Territory> neighbors) {
+    public Territory(String name, Map<String, Territory> neighbors) {
         this.territoryName = name;
         this.territoryUnits = 0;
         this.territoryNeighbors = neighbors;
@@ -53,6 +57,9 @@ public class Territory {
         this.territoryNeighbors = territoryNeighbors;
     }
 
+    public void addTerritoryNeighbors(Territory neighbour) {
+        this.territoryNeighbors.put(neighbour.getTerritoryName(), neighbour);
+    }
 
     public Map<String, Territory> getTerritoryNeighbors() {
         return territoryNeighbors;
@@ -76,5 +83,23 @@ public class Territory {
 
     public boolean checkNeighbor(Territory aim) {
         return territoryNeighbors.containsValue(aim);
+    }
+
+    public JSONObject serialize() {
+        JSONObject territoryItem = new JSONObject();
+        territoryItem.put("name", this.territoryName);
+        territoryItem.put("units", this.territoryUnits);
+        JSONArray neighbourList = new JSONArray();
+        this.territoryNeighbors.keySet().forEach(neighbourList::put);
+        territoryItem.put("neighbours", neighbourList);
+
+        return territoryItem;
+    }
+
+    public static Territory deserialize(JSONObject territoryObject) throws JSONException {
+        Territory territory = new Territory(territoryObject.getString("name"));
+        territory.setTerritoryUnits(territoryObject.getInt("units"));
+
+        return territory;
     }
 }
