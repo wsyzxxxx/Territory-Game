@@ -26,8 +26,8 @@ public class Printer {
     public void printUnreachablePlace(){
         System.out.println(promptBase.unReachablePlace_prompt);
     }
-    public void printCurrMap(TerritoryRelation territoryRelation){
-        System.out.println(promptBase.currMap_Prompt(territoryRelation));
+    public void printCurrMap(){
+        System.out.println(promptBase.currMap_Prompt());
     }
     public void printUnits_prompt(){System.out.println(promptBase.units_prompt);}
     public void printActionChoice(){

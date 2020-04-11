@@ -99,9 +99,10 @@ public class Interpreter {
     //not check larger or not
     boolean isValidNums(String numsInput, Player player) {
         if(numsInput.equals("")) {
-            System.out.println("input invalid, please input again");
+            printer.printInvalidUnits();
             return false;
         }
+
         int i = nullifySpace(numsInput);
         numsInput = numsInput.substring(i);
         return isNumeric(numsInput);
