@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class MessageReceiver {
-    public ArrayList<Order> receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap) throws IOException, JSONException, IllegalArgumentException {
+    public ArrayList<Order> receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap, String requiredType) throws IOException, JSONException, IllegalArgumentException {
         JSONObject turnObject = new JSONObject(linkInfo.readMessage());
         if (!turnObject.getString("status").equals("success")) {
             throw new IllegalArgumentException("Network error with player " + linkInfo.getPlayerName());
@@ -18,7 +18,8 @@ public class MessageReceiver {
 
         ArrayList<Order> orderList = new ArrayList<>();
         turnObject.getJSONArray("data").forEach(element -> {
-            if (!((JSONObject)element).getString("player").equals(linkInfo.getPlayerName())) {
+            if (!((JSONObject)element).getString("player").equals(linkInfo.getPlayerName()) ||
+                !((JSONObject)element).getString("type").equals(requiredType)) {
                 throw new IllegalArgumentException("Wrong order type with player " + linkInfo.getPlayerName());
             }
 
