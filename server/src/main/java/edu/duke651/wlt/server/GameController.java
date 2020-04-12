@@ -140,19 +140,4 @@ public class GameController {
         this.territoryGroups = map.getGroups();
     }
 
-//    public Map<String, Player> getPlayers() {
-//        return players;
-//    }
-//
-//    public void setPlayers(HashMap<String, Player> players) {
-//        this.players = players;
-//    }
-//
-//    public HashMap<String, Territory> getTerritoryMap() {
-//        return territoryMap;
-//    }
-//
-//    public void setTerritoryMap(HashMap<String, Territory> territoryMap) {
-//        this.territoryMap = territoryMap;
-//    }
 }

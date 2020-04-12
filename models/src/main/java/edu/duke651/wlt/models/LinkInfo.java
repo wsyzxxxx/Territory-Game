@@ -30,7 +30,6 @@ public class LinkInfo {
     }
 
     public void sendMessage(String message) throws IOException {
-        System.out.println("before sending " + message);
         this.bufferedWriter.write(message);
         this.bufferedWriter.newLine();
         this.bufferedWriter.flush();
