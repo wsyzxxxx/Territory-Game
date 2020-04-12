@@ -97,6 +97,10 @@ public class GameController {
         for(Order order: attackOrders) {
             order.execute();
         }
+        //increment territory unit by 1
+        for (Territory territory : territoryMap.values()) {
+            territory.incrementUnits();
+        }
     }
 
     private void deletePlayers() {

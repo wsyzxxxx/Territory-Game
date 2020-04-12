@@ -36,13 +36,16 @@ public class AttackOrder extends Order {
         int attackUnits = numUnits;
         int defendUnits = aim.getTerritoryUnits();
         while(true) {
+            System.out.println(player.getPlayerName() + ": from " + source.getTerritoryName() + " to " + aim.getTerritoryName() + "| AttackUnits: " + attackUnits + "; DefendUnits: " + defendUnits);
             if (attackUnits == 0) {
                 aim.setTerritoryUnits(defendUnits);
                 break;
             }
             if (defendUnits == 0) {
                 aim.setTerritoryUnits(attackUnits);
+                aim.getTerritoryOwner().removeTerritory(aim);
                 aim.setTerritoryOwner(player);
+                player.addTerritory(aim);
                 break;
             }
             int attackDice = dice.nextInt(20);
