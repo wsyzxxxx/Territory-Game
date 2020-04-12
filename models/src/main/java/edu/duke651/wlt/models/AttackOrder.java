@@ -59,13 +59,13 @@ public class AttackOrder extends Order {
     public void execute() {
         if (checkLegal())
             runOrder();
-        else if (source.checkNeighbor(aim) && source.getTerritoryOwner().equals(aim.getTerritoryOwner()))
+        else if (source.checkNeighbor(aim) && aim.getTerritoryOwner().equals(player))
             aim.increaseUnits(numUnits);
     }
 
     @Override
     public boolean checkLegal() {
-        return source.checkNeighbor(aim) && !source.getTerritoryOwner().equals(aim.getTerritoryOwner());
+        return source.checkNeighbor(aim) && !aim.getTerritoryOwner().equals(player);
     }
 
     public static AttackOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
