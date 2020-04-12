@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -77,18 +78,16 @@ public class MessageSender {
         playerLinkInfoMap.forEach((player, linkInfo) -> playerWithTerritoryList.put(player.serialize()));
         messageJSON.put("playerList", playerWithTerritoryList);
 
+        ArrayList<Player> brokenList = new ArrayList<>();
         //send the results
         playerLinkInfoMap.forEach((player, linkInfo) -> {
-            if (linkInfo.isAlive()) {
-                try {
-                    linkInfo.sendMessage(messageJSON.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                playerLinkInfoMap.remove(player, linkInfo);
+            try {
+                linkInfo.sendMessage(messageJSON.toString());
+            } catch (Exception e) {
+                brokenList.add(player);
             }
         });
+        brokenList.forEach(player -> playerLinkInfoMap.remove(player));
     }
 
     public void sendTerritoryList(LinkInfo linkInfo, Collection<Territory> territories) throws IOException {
