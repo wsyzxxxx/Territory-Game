@@ -4,11 +4,15 @@
 package edu.duke651.wlt.server;
 
 public class Server {
-    public String getGreeting() {
-        return "Hello world.";
-    }
-
     public static void main(String[] args) {
-        System.out.println(new Server().getGreeting());
+        try {
+            GameController gameController = new GameController();
+            gameController.startGame();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Some error happens! Please restart the game!");
+        }
+
+        System.out.println("Game over!");
     }
 }

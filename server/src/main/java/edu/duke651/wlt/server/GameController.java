@@ -5,6 +5,8 @@ import org.json.JSONObject;
 import org.json.JSONString;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,48 +19,67 @@ import java.util.Random;
  * @create: 2020-04-11 11:20
  **/
 public class GameController {
-    private HashMap<String, Player> players = new HashMap<>();
-    private HashMap<Player, LinkInfo> playerLinkInfoHashMap = new HashMap<>(); //TODO
+    private HashMap<String, Player> players;
+    private HashMap<Player, LinkInfo> playerLinkInfoHashMap;
     private HashMap<String, Territory> territoryMap;
-    private MessageSender messageSender = new MessageSender();
-    private MessageReceiver messageReceiver = new MessageReceiver();
+    private MessageSender messageSender;
+    private MessageReceiver messageReceiver;
     private ArrayList<ArrayList<Territory>> territoryGroups;
 
-    public GameController() {
+    public GameController() throws IOException {
+        this.players = new HashMap<>();
+        this.playerLinkInfoHashMap = new HashMap<>();
+        this.messageReceiver = new MessageReceiver();
+        this.messageSender = new MessageSender();
+
         territoryMapInit();
         assignTerritory();
+        createLink();
     }
 
-    private void gameStart() throws IOException {
-        while(!isGameOver()) {
+    public void startGame() throws IOException {
+        while (!isGameOver()) {
             takeTurn();
             deletePlayers();
         }
-        gameOver();
+        endGame();
     }
 
-    private void gameOver() {
-        //
+    private void endGame() throws IOException {
         //send finish message
-       for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
-            messageSender.sendFinishMessage(linkInfo, players.values().iterator().next().getPlayerName());
+       for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
+           messageSender.sendFinishMessage(linkInfo, players.values().iterator().next().getPlayerName());
+           linkInfo.closeLink();
+       }
+    }
+
+    private void createLink() throws IOException {
+        ServerSocket serverSocket = new ServerSocket(ServerSetting.PORT);
+        while (playerLinkInfoHashMap.size() < ServerSetting.PLAYER_NUM) {
+            LinkInfo linkInfo = new LinkInfo(serverSocket.accept());
+            linkInfo.setPlayerName(linkInfo.readMessage());
+            Player player = new Player(linkInfo.getPlayerName());
+            playerLinkInfoHashMap.put(player, linkInfo);
+        }
+        serverSocket.close();
     }
 
     private void takeTurn() throws IOException {
-        //
         //broadcast the map and player setting
         messageSender.sendResults(playerLinkInfoHashMap, territoryMap);
 
         //request new orders
-//        for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
-//        messageSender.sendMessage(linkInfo, oneJSONObject);
+        //for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
+        //messageSender.sendMessage(linkInfo, oneJSONObject);
 
         //receive new orders
         ArrayList<Order> moveOrders = new ArrayList<>();
         ArrayList<Order> attackOrders = new ArrayList<>();
         for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
-            moveOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap));
-            attackOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap));
+            if (players.containsKey(linkInfo.getPlayerName())) {
+                moveOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
+                attackOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
+            }
         }
 
         //miss simulation execution here. This seems OK with current layout.
@@ -84,16 +105,15 @@ public class GameController {
     }
 
     private void assignTerritory() {
-        //
         //randomly assign territories to players
-        Random r = new Random();
+        Random random = new Random();
         for (Player player: players.values()) {
-            ArrayList<Territory> territoryArrayList = this.territoryGroups.get(r.nextInt(territoryGroups.size()));
+            ArrayList<Territory> territoryArrayList = this.territoryGroups.get(random.nextInt(territoryGroups.size()));
             for (Territory territory: territoryArrayList) {
                 territory.setTerritoryOwner(player);
                 player.addTerritory(territory);
             }
-//            messageSender.sendTerritoryList(playerLinkInfoHashMap.get(player), territoryArrayList);
+            //messageSender.sendTerritoryList(playerLinkInfoHashMap.get(player), territoryArrayList);
             territoryGroups.remove(territoryArrayList);
         }
 
@@ -105,19 +125,19 @@ public class GameController {
         this.territoryGroups = map.getGroups();
     }
 
-    public Map<String, Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(HashMap<String, Player> players) {
-        this.players = players;
-    }
-
-    public HashMap<String, Territory> getTerritoryMap() {
-        return territoryMap;
-    }
-
-    public void setTerritoryMap(HashMap<String, Territory> territoryMap) {
-        this.territoryMap = territoryMap;
-    }
+//    public Map<String, Player> getPlayers() {
+//        return players;
+//    }
+//
+//    public void setPlayers(HashMap<String, Player> players) {
+//        this.players = players;
+//    }
+//
+//    public HashMap<String, Territory> getTerritoryMap() {
+//        return territoryMap;
+//    }
+//
+//    public void setTerritoryMap(HashMap<String, Territory> territoryMap) {
+//        this.territoryMap = territoryMap;
+//    }
 }
