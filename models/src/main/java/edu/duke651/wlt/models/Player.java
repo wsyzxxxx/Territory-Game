@@ -106,7 +106,7 @@ public class Player {
     }
 
     public boolean checkLose() {
-        return territories.isEmpty();
+        return territories == null || territories.isEmpty();
     }
 
     public JSONObject serialize() {
