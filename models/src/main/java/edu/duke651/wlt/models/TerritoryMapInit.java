@@ -3,6 +3,7 @@ package edu.duke651.wlt.models;
 import javafx.geometry.HorizontalDirection;
 
 import java.lang.module.ModuleDescriptor;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -14,6 +15,7 @@ import java.util.*;
 public class TerritoryMapInit {
 
     private HashMap<String, Territory> territoryMapInit = new HashMap<>();
+    private ArrayList<ArrayList<Territory>> territoryGroups = new ArrayList<>();
 
     /**
     * @Description: This function TerritoryMapInit is to generate the specific map of this game.
@@ -83,7 +85,26 @@ public class TerritoryMapInit {
         territoryMapInit.put(Mordor.getTerritoryName(), Mordor);
         territoryMapInit.put(Hogwarts.getTerritoryName(), Hogwarts);
         territoryMapInit.put(Roshar.getTerritoryName(), Roshar);
-
+        //divide groups
+        //group 1
+        ArrayList<Territory> groupOne = new ArrayList<>();
+        groupOne.add(Narnia);
+        groupOne.add(Midkemia);
+        groupOne.add(Oz);
+        //group 2
+        ArrayList<Territory> groupTwo = new ArrayList<>();
+        groupTwo.add(Elantris);
+        groupTwo.add(Scadrial);
+        groupTwo.add(Roshar);
+        //group 3
+        ArrayList<Territory> groupThree = new ArrayList<>();
+        groupThree.add(Gondor);
+        groupThree.add(Mordor);
+        groupThree.add(Hogwarts);
+        //put in
+        territoryGroups.add(groupOne);
+        territoryGroups.add(groupTwo);
+        territoryGroups.add(groupThree);
     }
 
     /**
@@ -96,4 +117,5 @@ public class TerritoryMapInit {
     public HashMap<String, Territory> getMap() {
         return territoryMapInit;
     }
+    public ArrayList<ArrayList<Territory>> getGroups() {return territoryGroups;}
 }
