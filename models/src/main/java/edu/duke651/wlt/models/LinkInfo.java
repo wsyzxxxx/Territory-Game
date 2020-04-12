@@ -3,12 +3,25 @@ package edu.duke651.wlt.models;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * @program: wlt-risc
+ * @description: This is LinkInfo class which contains all the information for one player's connection.
+ * @author: Will
+ * @create: 2020-04-09 11:55
+ **/
 public class LinkInfo {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String playerName;
 
+    /**
+    * @Description: This function LinkInfo is to construct linkinfo with socket and i/o interfaces.
+    * @Param: [socket]
+    * @return:
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public LinkInfo(Socket socket) throws IOException {
         this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -40,6 +53,13 @@ public class LinkInfo {
         return !this.socket.isClosed();
     }
 
+    /**
+    * @Description: This function closeLink is to close link.
+    * @Param: []
+    * @return: void
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public void closeLink() throws IOException {
         this.bufferedWriter.close();
         this.bufferedReader.close();

@@ -28,7 +28,6 @@ public class Player {
         this.playerName = playerName;
         this.territories = territories;
     }
-//    private ArrayList<Order> orders; //this is to be sent to server.
 
     //methods:
     public void addTerritory(Territory t){
@@ -75,10 +74,6 @@ public class Player {
         aim.addTerritory(t);
     }
 
-    //    void createOrder(Territory source, Territory aim, int num) {
-//
-//    }
-
     /**
     * @Description: This function checkReachable is to use recursion on self's neighbors to check whether two territories are connected to enable move orders.
     * @Param: [source, aim]
@@ -105,10 +100,24 @@ public class Player {
         return true;
     }
 
+    /**
+    * @Description: This function checkLose is to check whether this player loses by checking whether his territory list is empty.
+    * @Param: []
+    * @return: boolean
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     public boolean checkLose() {
         return territories == null || territories.isEmpty();
     }
 
+    /**
+    * @Description: This function serialize is to serialize the player in order to send over network.
+    * @Param: []
+    * @return: org.json.JSONObject
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public JSONObject serialize() {
         JSONObject playerObject = new JSONObject();
         playerObject.put("playerName", this.playerName);
@@ -125,6 +134,13 @@ public class Player {
         return playerObject;
     }
 
+    /**
+    * @Description: This function deserialize is to deserialize the player after receiving the message.
+    * @Param: [playerObject, territoryMap]
+    * @return: edu.duke651.wlt.models.Player
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public static Player deserialize(JSONObject playerObject, Map<String, Territory> territoryMap) throws JSONException {
         Player player = new Player(playerObject.getString("playerName"));
         playerObject.getJSONArray("territories").forEach(element -> {

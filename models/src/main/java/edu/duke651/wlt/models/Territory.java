@@ -16,16 +16,29 @@ import java.util.Map;
 public class Territory {
     //fields:
     private String territoryName;
-
     private Player territoryOwner;
     private int territoryUnits;
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
 
+    /**
+    * @Description: This is the constructor with only territory name.
+    * @Param: [territoryName]
+    * @return:
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     public Territory(String territoryName) {
         this.territoryName = territoryName;
         this.territoryUnits = 0;
     }
 
+    /**
+    * @Description: This is the full constructor.
+    * @Param: [name, neighbors]
+    * @return:
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     public Territory(String name, Map<String, Territory> neighbors) {
         this.territoryName = name;
         this.territoryUnits = 0;
@@ -82,10 +95,24 @@ public class Territory {
         this.territoryUnits = territoryUnits;
     }
 
+    /**
+    * @Description: This function checkNeighbor is to check whether one territory is neighbor of aim.
+    * @Param: [aim]
+    * @return: boolean
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     public boolean checkNeighbor(Territory aim) {
         return territoryNeighbors.containsValue(aim);
     }
 
+    /**
+     * @Description: This function serialize is to serialize the player in order to send over network.
+     * @Param: []
+     * @return: org.json.JSONObject
+     * @Author: Will
+     * @Date: 2020/4/13
+     */
     public JSONObject serialize() {
         JSONObject territoryItem = new JSONObject();
         territoryItem.put("name", this.territoryName);
@@ -97,6 +124,13 @@ public class Territory {
         return territoryItem;
     }
 
+    /**
+     * @Description: This function deserialize is to deserialize the player after receiving the message.
+     * @Param: [playerObject, territoryMap]
+     * @return: edu.duke651.wlt.models.Player
+     * @Author: Will
+     * @Date: 2020/4/13
+     */
     public static Territory deserialize(JSONObject territoryObject) throws JSONException {
         Territory territory = new Territory(territoryObject.getString("name"));
         territory.setTerritoryUnits(territoryObject.getInt("units"));
