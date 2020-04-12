@@ -6,6 +6,12 @@ import edu.duke651.wlt.models.Territory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+/**
+ * @Author: Tong
+ * @Description: printer information, all stored into string.
+ * @Pattern:Singleton
+ * @Modified by: Will
+ */
 
 public class PromptBase {
     public PromptBase() {}
@@ -14,7 +20,7 @@ public class PromptBase {
             "Now choose your action:\n" +
             "please input M for Move\n"+
             "please input A for Attack\n" +
-            "please input N for end of this round";
+            "please input N for end of this round\n";
     public static final String ORIGINAL_TERRITORIES_CHOICE_PROMPT = "Now choose your starting territory:";
     public static final String END_TERRITORIES_CHOICE_PROMPT =      "Now choose your target territory:";
     public static final String UNITS_PROMPT =                       "Now input number of units:";
@@ -32,15 +38,16 @@ public class PromptBase {
     public static final String INVALID_CHOICE_PROMPT =   "Invalid input, do not contain this territory Group or this territory Group has been taken! Please input again!";
     public static final String WELCOME_INFO_PROMPT = "Welcome to the Territory Game! Please enter your username:";
 
+    //print territory group name
     private String territoryGroupName(String key,Map<String, ArrayList<Territory>> territoryGroup){
         ArrayList<Territory> t = territoryGroup.get(key);
         StringBuilder init = new StringBuilder(" ");
         for(Territory territory:t){
-            init.append(territory.getTerritoryName()).append("\n");
+            init.append(territory.getTerritoryName()).append(" \n");
         }
         return init.toString();
     }
-
+    //not used
     public String selectTerritories_prompt(Player player, Map<String, ArrayList<Territory>> territoryGroup){
         return "Now select your three territories: \n" +
                 "please input 1 for Group1:\n"+ territoryGroupName("1", territoryGroup) +
@@ -72,17 +79,22 @@ public class PromptBase {
         }
         return stringBuilder.toString();
     }
-
+    //print current map, for example
+    //leo
+    //-------------
+    //4 units in Roshar (next to:  Elantris Hogwarts Scadrial)
+    //zt
+    //-------------
+    //5 units in Elantris (next to:  Narnia Scadrial Midkemia Roshar
     String currMap_Prompt(Collection<Player> players){
         StringBuilder init_territories = new StringBuilder();
         for(Player player : players){
-            init_territories.append("\n");
             init_territories.append(getPlayerName_prompt(player)).append("-------------").append("\n");
             init_territories.append(getTerritories_prompt(player)); // omniscient Will mark!
         }
         return init_territories.toString();
     }
-
+    //not used function
     String currMap_Prompt_WithoutPlayer(Map<String, Territory> territoryMap){
         StringBuilder init_territories = new StringBuilder("The available territories are listed as following\n");
         for(Territory territory: territoryMap.values()){
@@ -90,6 +102,7 @@ public class PromptBase {
         }
         return init_territories.toString();
     }
+
     String currTerritories_Prompt(Player player){
         StringBuilder init_territories = new StringBuilder("Your territories are:\n");
         for(Territory territory:player.getTerritories().values()){

@@ -6,6 +6,12 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @Author: Will, Tong
+ * @Description: the game controller in client end
+ * @Modified by: Will
+ */
+
 public class ClientController {
     private ServerHandler serverHandler;
     private Map<String, Player> playerMap;
@@ -13,11 +19,11 @@ public class ClientController {
     private Interpreter interpreter;
     private Printer printer;
     private String playerName;
-
+    //use two lists to store the orders get from player, ready to send it to server
     private ArrayList<Order> moveOrders;
     private ArrayList<Order> attackOrders;
 
-
+    //intialize the controller fields
     public ClientController() throws IOException {
         this.interpreter = Interpreter.getInstance();
         this.printer = Printer.getInstance();
@@ -29,11 +35,13 @@ public class ClientController {
         this.territoryMap = new HashMap<>();
     }
 
-
+    //this is the only function can get the input from client
+    //the goal it to get orders and store them in order lists.
     private void getOrders(){
         this.moveOrders = new ArrayList<>();
         this.attackOrders = new ArrayList<>();
         while (true) {
+            //get order
             Order order = interpreter.getOrder(this.playerMap.get(playerName), territoryMap);
             if (order instanceof AttackOrder) {
                 this.attackOrders.add(order);
@@ -44,7 +52,7 @@ public class ClientController {
             }
         }
     }
-
+    //run game in client, get interaction with server
     public void startGame() throws IOException {
         this.printer.printMessage("Game start!");
         try {

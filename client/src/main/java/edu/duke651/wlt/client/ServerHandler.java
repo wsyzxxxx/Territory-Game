@@ -44,7 +44,7 @@ public class ServerHandler {
     public void getResults(Map<String, Player> playerMap, Map<String, Territory> territoryMap) throws IOException, JSONException, IllegalArgumentException, IllegalStateException {
         JSONObject resultObject = new JSONObject(linkInfo.readMessage());
         if (resultObject.getString("status").equals("finish")) {
-            throw new IllegalStateException(resultObject.getString("data"));
+            throw new IllegalStateException(resultObject.getJSONObject("data").getString("winner"));
         } else if (!resultObject.getString("status").equals("success")) {
             throw new IllegalArgumentException("Network error with server");
         }
