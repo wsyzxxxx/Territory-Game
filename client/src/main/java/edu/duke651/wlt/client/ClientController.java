@@ -71,8 +71,10 @@ public class ClientController {
         } catch (IllegalStateException e) {
             printer.printMessage("Game over! The winner is: " + e.getMessage());
         } catch (JSONException e) {
+            e.printStackTrace();
             printer.printMessage("JSONException: " + e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             printer.printMessage("Fatal error: " + e.getMessage());
         }
 

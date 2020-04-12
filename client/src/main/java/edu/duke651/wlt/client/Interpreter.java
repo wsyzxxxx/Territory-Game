@@ -70,17 +70,22 @@ public class Interpreter {
         printer.printActionChoice();
         while(true) {
             String action = getStringInput().toUpperCase();
-            switch (action) {
-                case "N":
-                    printer.printEndRound_prompt();//this may need another function in promptBase and printer
-                    return null;
-                case "M":
-                    return getMove(player);
-                case "A":
-                    return getAttack(player, territoryMap);
-                default:
-                    printer.printInvalidAction();
-                    break;
+            try {
+                switch (action) {
+                    case "N":
+                        printer.printEndRound_prompt();//this may need another function in promptBase and printer
+                        return null;
+                    case "M":
+                        return getMove(player);
+                    case "A":
+                        return getAttack(player, territoryMap);
+                    default:
+                        printer.printInvalidAction();
+                        break;
+                }
+            } catch (IllegalArgumentException e) {
+                printer.printMessage("Please re-choose your action");
+                printer.printActionChoice();
             }
         }
     } // done now
@@ -88,56 +93,51 @@ public class Interpreter {
     Territory getSource(Player player) {
         printer.printOriginalTerritoriesChoice();
 
-        while(true){
-            source = getStringInput();
-            if(isValidOriginalPlace(source, player)){
-                return player.getTerritories().get(source);
-            } else {
-                printer.printInvalidSourcePlace();
-            }
+        source = getStringInput();
+        if(isValidOriginalPlace(source, player)){
+            return player.getTerritories().get(source);
+        } else {
+            printer.printInvalidSourcePlace();
+            throw new IllegalArgumentException();
         }
     }
 
     int getUnits(Player player) {
         printer.printUnits_prompt();
-        while(true) {
-            String units = getStringInput();
-            try {
-                int output = Integer.parseInt(units);
-                if (player.getTerritories().get(source).getTerritoryUnits() < output || output <= 0) {
-                    printer.printLargerUnits();
-                } else {
-                    return output;
-                }
-            } catch (NumberFormatException e) {
-                printer.printInvalidUnits();
+        String units = getStringInput();
+        try {
+            int output = Integer.parseInt(units);
+            if (player.getTerritories().get(source).getTerritoryUnits() < output || output <= 0) {
+                printer.printLargerUnits();
+                throw new IllegalArgumentException();
+            } else {
+                return output;
             }
+        } catch (NumberFormatException e) {
+            printer.printInvalidUnits();
+            throw new IllegalArgumentException();
         }
     }
 
     Territory getAim(Player player) {
         printer.printEndTerritoriesChoice();
-        while(true){
-            this.aim = getStringInput();
-            if(isValidEndPlace(aim, player)){
-                return player.getTerritories().get(aim);
-            } else {
-                //here may need printer.
-                printer.printInvalidEndPlace();
-            }
+        this.aim = getStringInput();
+        if(isValidEndPlace(aim, player)){
+            return player.getTerritories().get(aim);
+        } else {
+            printer.printInvalidEndPlace();
+            throw new IllegalArgumentException();
         }
     }
 
     Territory getAttackPlace(Player player, Map<String, Territory> territoryMap) {
         printer.printEndTerritoriesChoice();
-        while (true) {
-            String attackPlace = getStringInput();
-            if (isValidAttackPlace(attackPlace, player, territoryMap)) {
-                return player.getTerritories().get(attackPlace);
-            } else {
-                //here may need printer.
-                printer.printInvalidAttackPlace();
-            }
+        String attackPlace = getStringInput();
+        if (isValidAttackPlace(attackPlace, player, territoryMap)) {
+            return territoryMap.get(attackPlace);
+        } else {
+            printer.printInvalidAttackPlace();
+            throw new IllegalArgumentException();
         }
     }
 

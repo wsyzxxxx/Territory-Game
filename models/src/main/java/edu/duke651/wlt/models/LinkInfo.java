@@ -6,13 +6,13 @@ import java.net.Socket;
 public class LinkInfo {
     private Socket socket;
     private BufferedReader bufferedReader;
-    private PrintStream printStream;
+    private BufferedWriter bufferedWriter;
     private String playerName;
 
     public LinkInfo(Socket socket) throws IOException {
         this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.printStream = new PrintStream(new BufferedOutputStream(socket.getOutputStream()));
+        this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
     public String getPlayerName() {
@@ -29,9 +29,11 @@ public class LinkInfo {
         return res;
     }
 
-    public void sendMessage(String message) {
-        this.printStream.println(message);
-        this.printStream.flush();
+    public void sendMessage(String message) throws IOException {
+        System.out.println("before sending " + message);
+        this.bufferedWriter.write(message);
+        this.bufferedWriter.newLine();
+        this.bufferedWriter.flush();
         System.out.println("Send message! " + message);
     }
 
@@ -40,7 +42,7 @@ public class LinkInfo {
     }
 
     public void closeLink() throws IOException {
-        this.printStream.close();
+        this.bufferedWriter.close();
         this.bufferedReader.close();
         this.socket.close();
     }

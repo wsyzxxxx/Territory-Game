@@ -24,14 +24,14 @@ public class ServerHandler {
         this.linkInfo.sendMessage(clientName);
     }
 
-    public void sendSelection(Player player) {
+    public void sendSelection(Player player) throws IOException {
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("status", SUCCESS);
         messageJSON.put("data", player.serialize());
         linkInfo.sendMessage(messageJSON.toString());
     }
 
-    public void sendOrders(ArrayList<Order> orders) {
+    public void sendOrders(ArrayList<Order> orders) throws IOException{
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("status", SUCCESS);
 
