@@ -104,8 +104,13 @@ public class GameController {
     }
 
     private void deletePlayers() {
+        ArrayList<String> removeList = new ArrayList<>();
         for (Player player : players.values()) {
-            if (player.checkLose()) players.remove(player.getPlayerName());
+            if (player.checkLose()) removeList.add(player.getPlayerName());
+        }
+
+        for (String playerName : removeList) {
+            players.remove(playerName);
         }
     }
 

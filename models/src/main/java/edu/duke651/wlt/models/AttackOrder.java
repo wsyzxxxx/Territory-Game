@@ -35,7 +35,7 @@ public class AttackOrder extends Order {
         Random dice = new Random();
         int attackUnits = numUnits;
         int defendUnits = aim.getTerritoryUnits();
-        while(true) {
+        while (true) {
             System.out.println(player.getPlayerName() + ": from " + source.getTerritoryName() + " to " + aim.getTerritoryName() + "| AttackUnits: " + attackUnits + "; DefendUnits: " + defendUnits);
             if (attackUnits == 0) {
                 aim.setTerritoryUnits(defendUnits);
