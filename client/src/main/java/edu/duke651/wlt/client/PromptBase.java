@@ -17,19 +17,19 @@ public class PromptBase {
             "please input N for end of this round\n";
     public static final String ORIGINAL_TERRITORIES_CHOICE_PROMPT = "Now choose your starting territory:";
     public static final String END_TERRITORIES_CHOICE_PROMPT =      "Now choose your target territory:";
-    public static final String UNITS_PROMPT =                       "Now input number of units: \n";
-    public static final String INVALID_ACTION_PROMPT =      "Invalid action, please input again\n";
-    public static final String INVALID_UNITS_PROMPT =       "Invalid unites, please input again\n";
+    public static final String UNITS_PROMPT =                       "Now input number of units:";
+    public static final String INVALID_ACTION_PROMPT =      "Invalid action, please input again";
+    public static final String INVALID_UNITS_PROMPT =       "Invalid unites, please input again";
     public static final String INVALID_END_PLACE_PROMPT =    "Invalid aim place, please input again";
     public static final String INVALID_ATTACK_PLACE_PROMPT = "Invalid attack place, please input again";
     public static final String LARGER_UNITS_PROMPT = "This territory do no contains so many units, please input again";
     public static final String INVALID_SOURCE_PLACE_PROMPT = "Invalid source place, please input again";
     public static final String NO_MATCH_PLACE_PROMPT = "You do not have the territory";
     public static final String UN_REACHABLE_PLACE_PROMPT = "The target territory is unreachable";
-    public static final String END_ROUND_PROMPT = "You choose to end the input order round\n";
-    public static final String TERRITORY_CHOICE_PROMPT = "Congratulations! You become the owner of this territory group!\n";
-    public static final String FINISH_SELECTION_PROMPT = "Now you have three territories, selection complete!\n";
-    public static final String INVALID_CHOICE_PROMPT =   "Invalid input, do not contain this territory Group or this territory Group has been taken! Please input again!\n";
+    public static final String END_ROUND_PROMPT = "You choose to end the input order round";
+    public static final String TERRITORY_CHOICE_PROMPT = "Congratulations! You become the owner of this territory group!";
+    public static final String FINISH_SELECTION_PROMPT = "Now you have three territories, selection complete!";
+    public static final String INVALID_CHOICE_PROMPT =   "Invalid input, do not contain this territory Group or this territory Group has been taken! Please input again!";
     public static final String WELCOME_INFO_PROMPT = "Welcome to the Territory Game! Please enter your username:";
 
     private String territoryGroupName(String key,Map<String, ArrayList<Territory>> territoryGroup){
@@ -76,7 +76,7 @@ public class PromptBase {
     String currMap_Prompt(Collection<Player> players){
         StringBuilder init_territories = new StringBuilder();
         for(Player player : players){
-            init_territories.append(getPlayerName_prompt(player)).append("-------------");
+            init_territories.append(getPlayerName_prompt(player)).append("-------------").append("\n");
             init_territories.append(getTerritories_prompt(player)); // omniscient Will mark!
         }
         return init_territories.toString();
