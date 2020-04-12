@@ -138,6 +138,13 @@ public class GameController {
         }
     }
 
+    /**
+    * @Description: This function deletePlayers is to delete players from the player map who have lost all the territories.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void deletePlayers() {
         ArrayList<String> removeList = new ArrayList<>();
         for (Player player : players.values()) {
@@ -149,10 +156,24 @@ public class GameController {
         }
     }
 
+    /**
+    * @Description: This function isGameOver is to check whether the game is over by checking the size of player map.
+    * @Param: []
+    * @return: boolean
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private boolean isGameOver() {
         return players.size() == 1;
     }
 
+    /**
+    * @Description: This function assignTerritory is to assign territory groups randomly to all the players connected.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void assignTerritory() {
         //randomly assign territories to players
         Random random = new Random();
@@ -169,6 +190,13 @@ public class GameController {
 
     }
 
+    /**
+    * @Description: This function territoryMapInit is to get a new map layout from the class TerritoryMapInit. This class can be inherited for more different maps. 
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void territoryMapInit() {
         TerritoryMapInit map = new TerritoryMapInit();
         this.territoryMap = map.getMap();
