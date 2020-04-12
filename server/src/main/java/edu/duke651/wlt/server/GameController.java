@@ -47,8 +47,7 @@ public class GameController {
     private void takeTurn() throws IOException {
         //TODO
         //broadcast the map and player setting
-//        for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
-//        messageSender.sendMessage(linkInfo, oneJSONObject);
+        messageSender.sendResults(playerLinkInfoHashMap, territoryMap);
 
         //request new orders
 //        for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
