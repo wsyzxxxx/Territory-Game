@@ -92,15 +92,15 @@ public class Player {
         Territory curr = source;
         ArrayList<Territory> checked = new ArrayList<>();
         ArrayList<Territory> toCheck = new ArrayList<>();
-        toCheck.add(source);
-        while (!source.checkNeighbor(aim)) {
-            checked.add(source);
-            for (Territory t : source.getTerritoryNeighbors().values()) {
-                if (!checked.contains(t)) toCheck.add(t);
+        toCheck.add(curr);
+        while (!curr.checkNeighbor(aim)) {
+            checked.add(curr);
+            for (Territory t : curr.getTerritoryNeighbors().values()) {
+                if (!checked.contains(t) && t.getTerritoryOwner().equals(source.getTerritoryOwner())) toCheck.add(t);
             }
-            toCheck.remove(source);
+            toCheck.remove(curr);
             if (toCheck.isEmpty()) return false;
-            source = toCheck.get(0);
+            curr = toCheck.get(0);
         }
         return true;
     }
