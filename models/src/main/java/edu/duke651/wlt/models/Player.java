@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,14 +17,14 @@ import java.util.Map;
 public class Player {
     //fields:
     private String playerName;
-    private Map<String, Territory> territories;
+    private HashMap<String, Territory> territories = new HashMap<>();
 
     //constructors
     public Player(String playerName) {
         this.playerName = playerName;
     }
 
-    public Player(String playerName, Map<String, Territory> territories) {
+    public Player(String playerName, HashMap<String, Territory> territories) {
         this.playerName = playerName;
         this.territories = territories;
     }
@@ -57,25 +58,26 @@ public class Player {
      * @Author: Leo
      * @Date: 2020/4/9
      */
-    public void setTerritories(Map<String, Territory> territories) {
+    public void setTerritories(HashMap<String, Territory> territories) {
         this.territories = territories;
     }
 
+    /**
+    * @Description: This function transferTerritory is to transfer one territory t from this player to aim player by remove t from this player's territories, set t's new owner as aim, and add t to aim's territories.
+    * @Param: [aim, t]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/11
+    */
     void transferTerritory(Player aim, Territory t) {
         removeTerritory(t);
+        t.setTerritoryOwner(aim);
         aim.addTerritory(t);
     }
 
-    /**
-    * @Description: This function createOrder is to create an instance of Order.
-    * @Param: [source, aim, num]
-    * @return: void
-    * @Author: Leo
-    * @Date: 2020/4/9
-    */
-    void createOrder(Territory source, Territory aim, int num) {
-
-    }
+    //    void createOrder(Territory source, Territory aim, int num) {
+//
+//    }
 
     /**
     * @Description: This function checkReachable is to use recursion on self's neighbors to check whether two territories are connected to enable move orders.
@@ -84,7 +86,7 @@ public class Player {
     * @Author: Leo
     * @Date: 2020/4/9
     */
-    public boolean checkReachable(Territory source, Territory aim){
+    public boolean checkReachable(Territory source, Territory aim) {
         if (!source.getTerritoryOwner().equals(aim.getTerritoryOwner()))
             return false;
         Territory curr = source;
@@ -101,6 +103,10 @@ public class Player {
             source = toCheck.get(0);
         }
         return true;
+    }
+
+    public boolean checkLose() {
+        return territories.isEmpty();
     }
 
     public JSONObject serialize() {
