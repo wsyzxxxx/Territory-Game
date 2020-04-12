@@ -30,7 +30,6 @@ public class MoveOrder extends Order {
     }
 
     private void runOrder() {
-        source.reduceUnits(numUnits);
         aim.increaseUnits(numUnits);
     }
 
