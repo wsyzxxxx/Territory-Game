@@ -82,8 +82,12 @@ public class GameController {
         ArrayList<Order> attackOrders = new ArrayList<>();
         for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
             if (players.containsKey(linkInfo.getPlayerName())) {
-                moveOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
-                attackOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
+                try {
+                    moveOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
+                    attackOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
+                } catch (Exception e) {
+                    System.out.println("Network error with player " + linkInfo.getPlayerName());
+                }
             }
         }
 
@@ -115,7 +119,7 @@ public class GameController {
     }
 
     private boolean isGameOver() {
-        return players.size() == 1;
+        return players.size() == 1 || playerLinkInfoHashMap.isEmpty();
     }
 
     private void assignTerritory() {
