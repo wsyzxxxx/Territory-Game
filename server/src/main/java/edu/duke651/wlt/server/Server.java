@@ -3,6 +3,12 @@
  */
 package edu.duke651.wlt.server;
 
+/**
+ * @program: wlt-risc
+ * @description: This is the main class of server responsible for newing game class and ending game.
+ * @author: Will
+ * @create: 2020-04-11 11:20
+ **/
 public class Server {
     public static void main(String[] args) {
         try {

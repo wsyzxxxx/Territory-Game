@@ -38,6 +38,13 @@ public class AttackOrder extends Order {
         System.out.println("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
     }
 
+    /**
+    * @Description: This function runOrder is to run attack orders as instruction requires.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void runOrder() {
         Random dice = new Random();
         int attackUnits = numUnits;
@@ -62,19 +69,41 @@ public class AttackOrder extends Order {
         }
     }
 
+    /**
+    * @Description: This function execute is to execute the order with some checks to ensure it executable.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     @Override
     public void execute() {
         if (checkLegal())
             runOrder();
+        //if the territory is taken by self's another army from another territory, then just add the numUnits.
         else if (source.checkNeighbor(aim) && aim.getTerritoryOwner().equals(player))
             aim.increaseUnits(numUnits);
     }
 
+    /**
+    * @Description: This function checkLegal is to check whether the attack order is constructed correctly by checking whether attacking neighbor and its owner.
+    * @Param: []
+    * @return: boolean
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     @Override
     public boolean checkLegal() {
         return source.checkNeighbor(aim) && !aim.getTerritoryOwner().equals(player);
     }
 
+    /**
+    * @Description: This function deserialize is to generate new order based on info received by server from clients.
+    * @Param: [moveObject, playerMap, territoryMap]
+    * @return: edu.duke651.wlt.models.AttackOrder
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public static AttackOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
         return new AttackOrder(playerMap.get(moveObject.getString("player")),
                 territoryMap.get(moveObject.getString("source")),

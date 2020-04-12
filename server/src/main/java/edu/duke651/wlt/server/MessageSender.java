@@ -26,7 +26,7 @@ public class MessageSender {
     * @Description: This function sendFinishMessage is to send finishing message to every client when the game is over.
     * @Param: [linkInfo, winnerName]
     * @return: void
-    * @Author: Leo
+    * @Author: Will
     * @Date: 2020/4/13
     */
     public void sendFinishMessage(LinkInfo linkInfo, String winnerName) throws IOException {
@@ -40,7 +40,7 @@ public class MessageSender {
     * @Description: This function sendErrorMessage is to send error message in case there is an error happens which requires client to handle it.
     * @Param: [linkInfo, errorMessage]
     * @return: void
-    * @Author: Leo
+    * @Author: Will
     * @Date: 2020/4/13
     */
     public void sendErrorMessage(LinkInfo linkInfo, String errorMessage) throws IOException {
@@ -51,10 +51,10 @@ public class MessageSender {
     }
 
     /**
-    * @Description: This function sendMessage is to send 
+    * @Description: This function sendMessage is to send general message using JSONObject.
     * @Param: [linkInfo, dataObject]
     * @return: void
-    * @Author: Leo
+    * @Author: Will
     * @Date: 2020/4/13
     */
     public void sendMessage(LinkInfo linkInfo, JSONObject dataObject) throws IOException {
@@ -64,6 +64,13 @@ public class MessageSender {
         linkInfo.sendMessage(messageJSON.toString());
     }
 
+    /**
+    * @Description: This function sendResults is the main method which sends every turn's game info to all client.
+    * @Param: [playerLinkInfoMap, territoryMap]
+    * @return: void
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public void sendResults(Map<Player, LinkInfo> playerLinkInfoMap, Map<String, Territory> territoryMap) throws IOException {
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("status", SUCCESS);
@@ -90,6 +97,13 @@ public class MessageSender {
         brokenList.forEach(player -> playerLinkInfoMap.remove(player));
     }
 
+    /**
+    * @Description: This function sendTerritoryList is to send to one player a list of territories.
+    * @Param: [linkInfo, territories]
+    * @return: void
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public void sendTerritoryList(LinkInfo linkInfo, Collection<Territory> territories) throws IOException {
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("status", SUCCESS);
