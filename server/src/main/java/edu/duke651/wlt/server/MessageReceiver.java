@@ -9,7 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * @program: wlt-risc
+ * @description: This is the message receiver class responsible for receiving info from connected clients using their Linkinfo.
+ * @author: Will
+ * @create: 2020-04-11 11:20
+ **/
 public class MessageReceiver {
+    /**
+    * @Description: This function receiveNewTurn is to receive new messages, especially new orders, every turn of game.
+    * @Param: [linkInfo, playerMap, territoryMap, requiredType]
+    * @return: java.util.ArrayList<edu.duke651.wlt.models.Order>
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public ArrayList<Order> receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap, String requiredType) throws IOException, JSONException, IllegalArgumentException {
         JSONObject turnObject = new JSONObject(linkInfo.readMessage());
         if (!turnObject.getString("status").equals("success")) {
@@ -35,6 +48,13 @@ public class MessageReceiver {
         return orderList;
     }
 
+    /**
+    * @Description: This function receiveSelection is to facilitate every client's selecting their own group of territories. For version 1, this is not required and thus not fulfilled entirely.
+    * @Param: [linkInfo, territoryMap]
+    * @return: edu.duke651.wlt.models.Player
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     public Player receiveSelection(LinkInfo linkInfo, Map<String, Territory> territoryMap) throws IOException {
         JSONObject selectionObject = new JSONObject(linkInfo.readMessage());
         if (!selectionObject.getString("status").equals("success") ||
