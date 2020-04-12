@@ -4,11 +4,13 @@
 package edu.duke651.wlt.client;
 
 public class Client {
-    public String getGreeting() {
-        return "Hello world.";
-    }
-
     public static void main(String[] args) {
-        System.out.println(new Client().getGreeting());
+        try {
+            ClientController clientController = new ClientController();
+            clientController.startGame();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Some error happens! Please restart the game!");
+        }
     }
 }

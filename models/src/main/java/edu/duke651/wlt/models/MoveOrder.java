@@ -19,8 +19,7 @@ public class MoveOrder extends Order {
         if (source.getTerritoryUnits() >= num) {
             this.source.reduceUnits(num);
             this.numUnits = num;
-        }
-        else {
+        } else {
             promptFail();
             this.numUnits = 0;
         }
