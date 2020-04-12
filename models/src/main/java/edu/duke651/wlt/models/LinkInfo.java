@@ -24,11 +24,19 @@ public class LinkInfo {
     }
 
     public String readMessage() throws IOException {
-        return this.bufferedReader.readLine();
+        String res = this.bufferedReader.readLine();
+        System.out.println("receive message! " + res);
+        return res;
     }
 
     public void sendMessage(String message) {
         this.printStream.println(message);
+        this.printStream.flush();
+        System.out.println("Send message! " + message);
+    }
+
+    public boolean isAlive() {
+        return !this.socket.isClosed();
     }
 
     public void closeLink() throws IOException {

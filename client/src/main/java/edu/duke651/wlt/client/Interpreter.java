@@ -150,10 +150,10 @@ public class Interpreter {
     }
 
     String getStringInput() {
-        String res = "";
+        String res = scanner.nextLine().trim();
         while (res.isEmpty()) {
-            res = scanner.nextLine().trim();
             printer.printInputNothing();
+            res = scanner.nextLine().trim();
         }
         return res;
     }

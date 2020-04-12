@@ -32,9 +32,12 @@ public class GameController {
         this.messageReceiver = new MessageReceiver();
         this.messageSender = new MessageSender();
 
+        System.out.println("Init map");
         territoryMapInit();
-        assignTerritory();
+        System.out.println("Create Link!");
         createLink();
+        System.out.println("Assign map");
+        assignTerritory();
     }
 
     public void startGame() throws IOException {
@@ -60,6 +63,8 @@ public class GameController {
             linkInfo.setPlayerName(linkInfo.readMessage());
             Player player = new Player(linkInfo.getPlayerName());
             playerLinkInfoHashMap.put(player, linkInfo);
+            players.put(player.getPlayerName(), player);
+            System.out.println("link: " + playerLinkInfoHashMap.size());
         }
         serverSocket.close();
     }
@@ -112,6 +117,7 @@ public class GameController {
             for (Territory territory: territoryArrayList) {
                 territory.setTerritoryOwner(player);
                 player.addTerritory(territory);
+                territoryMap.put(territory.getTerritoryName(), territory);
             }
             //messageSender.sendTerritoryList(playerLinkInfoHashMap.get(player), territoryArrayList);
             territoryGroups.remove(territoryArrayList);

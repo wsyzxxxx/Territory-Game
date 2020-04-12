@@ -6,6 +6,7 @@ package edu.duke651.wlt.server;
 public class Server {
     public static void main(String[] args) {
         try {
+            System.out.println("Game Start!");
             GameController gameController = new GameController();
             gameController.startGame();
         } catch (Exception e) {

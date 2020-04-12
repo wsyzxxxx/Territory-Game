@@ -37,24 +37,29 @@ public class TerritoryMapInit {
         //NarniaInit
         Narnia.addTerritoryNeighbors(Elantris);
         Narnia.addTerritoryNeighbors(Midkemia);
+        Narnia.setTerritoryUnits(10);
         //MidkemiaInit
         Midkemia.addTerritoryNeighbors(Narnia);
         Midkemia.addTerritoryNeighbors(Elantris);
         Midkemia.addTerritoryNeighbors(Scadrial);
         Midkemia.addTerritoryNeighbors(Oz);
+        Midkemia.setTerritoryUnits(10);
         //Oz
         Oz.addTerritoryNeighbors(Midkemia);
         Oz.addTerritoryNeighbors(Scadrial);
         Oz.addTerritoryNeighbors(Gondor);
         Oz.addTerritoryNeighbors(Mordor);
+        Oz.setTerritoryUnits(10);
         //Gondor
         Gondor.addTerritoryNeighbors(Oz);
         Gondor.addTerritoryNeighbors(Mordor);
+        Gondor.setTerritoryUnits(10);
         //Elantris
         Elantris.addTerritoryNeighbors(Narnia);
         Elantris.addTerritoryNeighbors(Midkemia);
         Elantris.addTerritoryNeighbors(Scadrial);
         Elantris.addTerritoryNeighbors(Roshar);
+        Elantris.setTerritoryUnits(10);
         //Scandrial
         Scadrial.addTerritoryNeighbors(Elantris);
         Scadrial.addTerritoryNeighbors(Midkemia);
@@ -62,19 +67,23 @@ public class TerritoryMapInit {
         Scadrial.addTerritoryNeighbors(Mordor);
         Scadrial.addTerritoryNeighbors(Hogwarts);
         Scadrial.addTerritoryNeighbors(Roshar);
+        Scadrial.setTerritoryUnits(10);
         //Mordor
         Mordor.addTerritoryNeighbors(Oz);
         Mordor.addTerritoryNeighbors(Scadrial);
         Mordor.addTerritoryNeighbors(Gondor);
         Mordor.addTerritoryNeighbors(Hogwarts);
+        Mordor.setTerritoryUnits(10);
         //Hogwarts
         Hogwarts.addTerritoryNeighbors(Scadrial);
         Hogwarts.addTerritoryNeighbors(Mordor);
         Hogwarts.addTerritoryNeighbors(Roshar);
+        Hogwarts.setTerritoryUnits(10);
         //Roshar
         Roshar.addTerritoryNeighbors(Elantris);
         Roshar.addTerritoryNeighbors(Scadrial);
         Roshar.addTerritoryNeighbors(Hogwarts);
+        Roshar.setTerritoryUnits(10);
         //put in
         territoryMapInit.put(Narnia.getTerritoryName(), Narnia);
         territoryMapInit.put(Elantris.getTerritoryName(), Elantris);

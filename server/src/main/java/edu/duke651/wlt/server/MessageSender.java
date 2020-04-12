@@ -50,7 +50,13 @@ public class MessageSender {
         messageJSON.put("playerList", playerWithTerritoryList);
 
         //send the results
-        playerLinkInfoMap.forEach((player, linkInfo) -> linkInfo.sendMessage(messageJSON.toString()));
+        playerLinkInfoMap.forEach((player, linkInfo) -> {
+            if (linkInfo.isAlive()) {
+                linkInfo.sendMessage(messageJSON.toString());
+            } else {
+                playerLinkInfoMap.remove(player, linkInfo);
+            }
+        });
     }
 
     public void sendTerritoryList(LinkInfo linkInfo, Collection<Territory> territories) {

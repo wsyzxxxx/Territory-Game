@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ public class Territory {
 
     private Player territoryOwner;
     private int territoryUnits;
-    private Map<String, Territory> territoryNeighbors;
+    private Map<String, Territory> territoryNeighbors = new HashMap<>();
 
     public Territory(String territoryName) {
         this.territoryName = territoryName;
