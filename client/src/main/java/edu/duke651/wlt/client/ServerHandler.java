@@ -83,4 +83,8 @@ public class ServerHandler {
                     initTerritoryMap.get(((JSONObject)element).getString("name")).addTerritoryNeighbors(initTerritoryMap.get(neighbour)))
         );
     }
+
+    public void closeLink() throws IOException {
+        this.linkInfo.closeLink();
+    }
 }

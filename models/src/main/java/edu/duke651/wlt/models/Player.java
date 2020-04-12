@@ -85,7 +85,6 @@ public class Player {
     * @Date: 2020/4/9
     */
     public boolean checkReachable(Territory source, Territory aim){
-
         if (!source.getTerritoryOwner().equals(aim.getTerritoryOwner()))
             return false;
         Territory curr = source;
