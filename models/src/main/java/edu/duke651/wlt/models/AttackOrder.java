@@ -27,6 +27,13 @@ public class AttackOrder extends Order {
         }
     }
 
+    /**
+    * @Description: This function promptFail is to prompt to server when construction of order fails.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void promptFail() {
         System.out.println("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
     }

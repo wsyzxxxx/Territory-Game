@@ -26,6 +26,13 @@ public class GameController {
     private MessageReceiver messageReceiver;
     private ArrayList<ArrayList<Territory>> territoryGroups;
 
+    /**
+    * @Description: This function GameController is to initialize (thus build) a list of players based on client connections and their inputs, a list of connection info, a messageReceiver and a messageSender to communicate with all the clients. The first might throw IOException.
+    * @Param: []
+    * @return: 
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     public GameController() throws IOException {
         this.players = new HashMap<>();
         this.playerLinkInfoHashMap = new HashMap<>();
@@ -40,6 +47,13 @@ public class GameController {
         assignTerritory();
     }
 
+    /**
+    * @Description: This function startGame is to start the game which turns into a loop, ending when there is only one player left is the winner.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     public void startGame() throws IOException {
         while (!isGameOver()) {
             takeTurn();
@@ -48,6 +62,13 @@ public class GameController {
         endGame();
     }
 
+    /**
+    * @Description: This function endGame is to send finish message to all the clients connected, indicating a closure of them.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void endGame() throws IOException {
         //send finish message
        for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
@@ -56,6 +77,13 @@ public class GameController {
        }
     }
 
+    /**
+    * @Description: This function createLink is to create links between clients and server.
+    * @Param: []
+    * @return: void
+    * @Author: Will
+    * @Date: 2020/4/13
+    */
     private void createLink() throws IOException {
         ServerSocket serverSocket = new ServerSocket(ServerSetting.PORT);
         while (playerLinkInfoHashMap.size() < ServerSetting.PLAYER_NUM) {
@@ -69,6 +97,13 @@ public class GameController {
         serverSocket.close();
     }
 
+    /**
+    * @Description: This function takeTurn is the turns in the game loop where players receive game info and then make move and attack decisions and send to server. Server is responsible for sending game info to every player at the start of every turn, and then receive orders, and then execute them. At the end of each turn, there should be a check whether one or more players lose the game and thus should be ignored of their incoming turns.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/13
+    */
     private void takeTurn() throws IOException {
         //broadcast the map and player setting
         messageSender.sendResults(playerLinkInfoHashMap, territoryMap);
