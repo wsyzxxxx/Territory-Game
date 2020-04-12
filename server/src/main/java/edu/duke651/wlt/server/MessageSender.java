@@ -14,10 +14,10 @@ public class MessageSender {
     private static final String SUCCESS = "success";
     private static final String ERROR = "error";
 
-    public void sendFinishMessage(LinkInfo linkInfo, JSONObject dataObject) {
+    public void sendFinishMessage(LinkInfo linkInfo, String winnerName) {
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("status", FINISH);
-        messageJSON.put("data", dataObject);
+        messageJSON.put("data", winnerName);
         linkInfo.sendMessage(messageJSON.toString());
     }
 

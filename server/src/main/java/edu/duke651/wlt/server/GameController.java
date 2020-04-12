@@ -38,14 +38,14 @@ public class GameController {
     }
 
     private void gameOver() {
-        //Todo
+        //
         //send finish message
-//        for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
-//            messageSender.sendFinishMessage(linkInfo, oneJSONObject);
+       for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
+            messageSender.sendFinishMessage(linkInfo, players.values().iterator().next().getPlayerName());
     }
 
     private void takeTurn() throws IOException {
-        //TODO
+        //
         //broadcast the map and player setting
         messageSender.sendResults(playerLinkInfoHashMap, territoryMap);
 
@@ -84,7 +84,7 @@ public class GameController {
     }
 
     private void assignTerritory() {
-        //TODO
+        //
         //randomly assign territories to players
         Random r = new Random();
         for (Player player: players.values()) {
