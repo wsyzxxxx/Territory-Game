@@ -38,12 +38,11 @@ public class MoveOrder extends Order {
     public void execute() {
         if (checkLegal())
             runOrder();
-
     }
 
     @Override
     public boolean checkLegal() {
-        return player.checkReachable(source, aim) && source.getTerritoryUnits() >= numUnits;
+        return player.checkReachable(source, aim);
     }
 
     public static MoveOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
