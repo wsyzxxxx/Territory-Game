@@ -65,7 +65,7 @@ public class Interpreter {
 //        }
 //    }
 
-    public Order getOrder(Player player){
+    public Order getOrder(Player player, Map<String, Territory> territoryMap) {
         //show the map? . no just show once , so need to be called in ClientController
         printer.printActionChoice();
         while(true) {
@@ -77,7 +77,7 @@ public class Interpreter {
                 case "M":
                     return getMove(player);
                 case "A":
-                    return getAttack(player);
+                    return getAttack(player, territoryMap);
                 default:
                     printer.printInvalidAction();
                     break;
@@ -128,11 +128,11 @@ public class Interpreter {
         }
     }
 
-    Territory getAttackPlace(Player player) {
+    Territory getAttackPlace(Player player, Map<String, Territory> territoryMap) {
         printer.printEndTerritoriesChoice();
-        while(true){
+        while (true) {
             String attackPlace = getStringInput();
-            if(isValidAttackPlace(attackPlace, player)){
+            if (isValidAttackPlace(attackPlace, player, territoryMap)) {
                 return player.getTerritories().get(attackPlace);
             } else {
                 //here may need printer.
@@ -141,8 +141,8 @@ public class Interpreter {
         }
     }
 
-    AttackOrder getAttack(Player player) {
-        return new AttackOrder(player, getSource(player), getAttackPlace(player), getUnits(player));
+    AttackOrder getAttack(Player player, Map<String, Territory> territoryMap) {
+        return new AttackOrder(player, getSource(player), getAttackPlace(player, territoryMap), getUnits(player));
     }
 
     MoveOrder getMove(Player player) {
@@ -158,13 +158,13 @@ public class Interpreter {
         return res;
     }
 
-    boolean isValidAttackPlace(String placeInput, Player player) {
+    boolean isValidAttackPlace(String placeInput, Player player, Map<String, Territory> territoryMap) {
         placeInput = placeInput.trim();
-        //
-        if(player.getTerritories().containsKey(placeInput)) {
+
+        if (player.getTerritories().containsKey(placeInput)) {
             System.out.println("you cannot attack ur own territory! Please input again");
             return false;
-        } else if(player.getTerritories().get(source).checkNeighbor(player.getTerritories().get(placeInput))) {
+        } else if (player.getTerritories().get(source).checkNeighbor(territoryMap.get(placeInput))) {
             return true;
         } else {
             printer.printUnreachablePlace();

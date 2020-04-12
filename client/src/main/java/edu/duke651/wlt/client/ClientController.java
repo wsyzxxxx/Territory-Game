@@ -34,7 +34,7 @@ public class ClientController {
         this.moveOrders = new ArrayList<>();
         this.attackOrders = new ArrayList<>();
         while (true) {
-            Order order = interpreter.getOrder(this.playerMap.get(playerName));
+            Order order = interpreter.getOrder(this.playerMap.get(playerName), territoryMap);
             if (order instanceof AttackOrder) {
                 this.attackOrders.add(order);
             } else if (order instanceof MoveOrder) {
