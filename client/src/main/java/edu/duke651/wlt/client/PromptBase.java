@@ -14,7 +14,7 @@ public class PromptBase {
             "Now choose your action:\n" +
             "please input M for Move\n"+
             "please input A for Attack\n" +
-            "please input N for end of this round\n";
+            "please input N for end of this round";
     public static final String ORIGINAL_TERRITORIES_CHOICE_PROMPT = "Now choose your starting territory:";
     public static final String END_TERRITORIES_CHOICE_PROMPT =      "Now choose your target territory:";
     public static final String UNITS_PROMPT =                       "Now input number of units:";
@@ -36,7 +36,7 @@ public class PromptBase {
         ArrayList<Territory> t = territoryGroup.get(key);
         StringBuilder init = new StringBuilder(" ");
         for(Territory territory:t){
-            init.append(territory.getTerritoryName()).append(" \n");
+            init.append(territory.getTerritoryName()).append("\n");
         }
         return init.toString();
     }
@@ -76,6 +76,7 @@ public class PromptBase {
     String currMap_Prompt(Collection<Player> players){
         StringBuilder init_territories = new StringBuilder();
         for(Player player : players){
+            init_territories.append("\n");
             init_territories.append(getPlayerName_prompt(player)).append("-------------").append("\n");
             init_territories.append(getTerritories_prompt(player)); // omniscient Will mark!
         }
