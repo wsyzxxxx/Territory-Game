@@ -12,8 +12,7 @@ import java.util.Random;
  * @create: 2020-04-09 12:16
  **/
 public class AttackOrder extends Order {
-
-    public AttackOrder(Player player,Territory source, Territory aim, int num) {
+    public AttackOrder(Player player, Territory source, Territory aim, int num) {
         this.player = player;
         this.source = source;
         this.aim = aim;

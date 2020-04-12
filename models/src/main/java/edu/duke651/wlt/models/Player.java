@@ -118,7 +118,7 @@ public class Player {
         this.territories.forEach((name, territory) -> {
             JSONObject territoryObject = new JSONObject();
             territoryObject.put("name", name);
-            territoryObject.put("unit", territory.getTerritoryUnits());
+            territoryObject.put("units", territory.getTerritoryUnits());
             territoryList.put(territoryObject);
         });
         playerObject.put("territories", territoryList);
@@ -129,8 +129,15 @@ public class Player {
     public static Player deserialize(JSONObject playerObject, Map<String, Territory> territoryMap) throws JSONException {
         Player player = new Player(playerObject.getString("playerName"));
         playerObject.getJSONArray("territories").forEach(element -> {
-            player.addTerritory(territoryMap.get(element));
-            territoryMap.get(element).setTerritoryOwner(player);
+            String territoryName = ((JSONObject)element).getString("name");
+            int territoryUnit = ((JSONObject)element).getInt("units");
+
+            if (!territoryMap.containsKey(territoryName)) {
+                throw new IllegalArgumentException("territory " + territoryName + " does not exist!");
+            }
+            player.addTerritory(territoryMap.get(territoryName));
+            territoryMap.get(territoryName).setTerritoryOwner(player);
+            territoryMap.get(territoryName).setTerritoryUnits(territoryUnit);
         });
 
         return player;
