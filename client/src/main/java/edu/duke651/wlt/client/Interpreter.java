@@ -6,6 +6,13 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * @Author: Tong
+ * @Description: the only class get input from players
+ * @Pattern:Singleton
+ * @Modified by: Will
+ */
+
 public class Interpreter {
     private static Interpreter instance = new Interpreter();
     private Printer printer;
@@ -65,6 +72,9 @@ public class Interpreter {
 //        }
 //    }
 
+    //get single order from input,
+    // @Parameter: player who make the input,
+    // @Parameter: territoryMap who stores all information about territories
     public Order getOrder(Player player, Map<String, Territory> territoryMap) {
         //show the map? . no just show once , so need to be called in ClientController
         printer.printActionChoice();
@@ -90,9 +100,10 @@ public class Interpreter {
         }
     } // done now
 
+    //get source territory from player's input
+    // @Parameter: player who make the input
     Territory getSource(Player player) {
         printer.printOriginalTerritoriesChoice();
-
         source = getStringInput();
         if(isValidOriginalPlace(source, player)){
             return player.getTerritories().get(source);
@@ -101,7 +112,8 @@ public class Interpreter {
             throw new IllegalArgumentException();
         }
     }
-
+    //get units number from input,
+    // @Parameter: player who make the input,
     int getUnits(Player player) {
         printer.printUnits_prompt();
         String units = getStringInput();
@@ -119,6 +131,8 @@ public class Interpreter {
         }
     }
 
+    //get move action target territory from input,
+    // @Parameter: player who make the input,
     Territory getAim(Player player) {
         printer.printEndTerritoriesChoice();
         this.aim = getStringInput();
@@ -130,6 +144,9 @@ public class Interpreter {
         }
     }
 
+    //get attack action target territory from input,
+    // @Parameter: player who make the input,
+    // @Parameter: territoryMap who stores all information about territories
     Territory getAttackPlace(Player player, Map<String, Territory> territoryMap) {
         printer.printEndTerritoriesChoice();
         String attackPlace = getStringInput();
@@ -141,14 +158,19 @@ public class Interpreter {
         }
     }
 
+    //get attack order from input,
+    // @Parameter: player who make the input,
+    // @Parameter: territoryMap who stores all information about territories
     AttackOrder getAttack(Player player, Map<String, Territory> territoryMap) {
         return new AttackOrder(player, getSource(player), getAttackPlace(player, territoryMap), getUnits(player));
     }
-
+    //get move order from input,
+    // @Parameter: player who make the input,
+    // @Parameter: territoryMap who stores all information about territories
     MoveOrder getMove(Player player) {
         return new MoveOrder(player, getSource(player), getAim(player), getUnits(player));
     }
-
+    //get input from player
     String getStringInput() {
         String res = scanner.nextLine().trim();
         while (res.isEmpty()) {
@@ -157,7 +179,10 @@ public class Interpreter {
         }
         return res;
     }
-
+    //check attack target valid in both semantics and in territory relation.
+    // @Parameter: input from player
+    // @Parameter: player who make the input,
+    // @Parameter: territoryMap who stores all information about territories
     boolean isValidAttackPlace(String placeInput, Player player, Map<String, Territory> territoryMap) {
         placeInput = placeInput.trim();
 
@@ -173,6 +198,9 @@ public class Interpreter {
     }
 
     //done now,
+    //check move target valid in both semantics and in territory relation.
+    // @Parameter: input from player
+    // @Parameter: player who make the input
     boolean isValidEndPlace(String placeInput, Player player){
         placeInput = placeInput.trim();
 
@@ -190,6 +218,9 @@ public class Interpreter {
     }
 
     //done by now
+    //check move target valid in both semantics and in territory relation.
+    // @Parameter: input from player
+    // @Parameter: player who make the input
     boolean isValidOriginalPlace(String placeInput, Player player) {
         placeInput = placeInput.trim();
         if (player.getTerritories().containsKey(placeInput)){
