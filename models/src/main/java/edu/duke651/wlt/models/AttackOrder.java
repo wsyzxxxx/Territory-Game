@@ -59,6 +59,8 @@ public class AttackOrder extends Order {
     public void execute() {
         if (checkLegal())
             runOrder();
+        else if (source.checkNeighbor(aim) && source.getTerritoryOwner().equals(aim.getTerritoryOwner()))
+            aim.increaseUnits(numUnits);
     }
 
     @Override
