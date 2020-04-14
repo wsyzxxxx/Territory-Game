@@ -46,6 +46,12 @@ public class AttackOrder extends Order {
     * @Date: 2020/4/13
     */
     private void runOrder() {
+        //the place has been occupied
+        if (aim.getTerritoryOwner() == this.player) {
+            aim.increaseUnits(this.numUnits);
+            return;
+        }
+
         //attack
         Random dice = new Random();
         int attackUnits = numUnits;
