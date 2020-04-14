@@ -44,7 +44,6 @@ public class MoveOrder extends Order {
     * @Date: 2020/4/13
     */
     private void runOrder() {
-        this.source.reduceUnits(this.numUnits);
         this.aim.increaseUnits(this.numUnits);
     }
 
