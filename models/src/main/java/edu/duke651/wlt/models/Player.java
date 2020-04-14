@@ -4,9 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: wlt-risc
@@ -82,22 +80,45 @@ public class Player {
     * @Date: 2020/4/9
     */
     public boolean checkReachable(Territory source, Territory aim) {
-        if (!source.getTerritoryOwner().equals(aim.getTerritoryOwner()))
+        if (source.getTerritoryOwner() != this || aim.getTerritoryOwner() != this)
             return false;
-        Territory curr = source;
-        ArrayList<Territory> checked = new ArrayList<>();
-        ArrayList<Territory> toCheck = new ArrayList<>();
-        toCheck.add(curr);
-        while (!curr.checkNeighbor(aim)) {
-            checked.add(curr);
-            for (Territory t : curr.getTerritoryNeighbors().values()) {
-                if (!checked.contains(t) && t.getTerritoryOwner().equals(source.getTerritoryOwner())) toCheck.add(t);
+//        Territory curr = source;
+//        ArrayList<Territory> checked = new ArrayList<>();
+//        ArrayList<Territory> toCheck = new ArrayList<>();
+//        toCheck.add(curr);
+//        while (!curr.checkNeighbor(aim)) {
+//            checked.add(curr);
+//            for (Territory t : curr.getTerritoryNeighbors().values()) {
+//                if (!checked.contains(t) && t.getTerritoryOwner().equals(source.getTerritoryOwner())) toCheck.add(t);
+//            }
+//            toCheck.remove(curr);
+//            if (toCheck.isEmpty()) return false;
+//            curr = toCheck.get(0);
+//        }
+//        return true;
+
+        //BFS to search the destination
+        Queue<Territory> territoryQueue = new LinkedList<>();
+        Set<Territory> visitedTerritory = new HashSet<>();
+        territoryQueue.add(source);
+        visitedTerritory.add(source);
+
+        while (!territoryQueue.isEmpty()) {
+            Territory curr = territoryQueue.poll();
+
+            if (curr == aim) {
+                return true;
             }
-            toCheck.remove(curr);
-            if (toCheck.isEmpty()) return false;
-            curr = toCheck.get(0);
+
+            for (Territory territory : curr.getTerritoryNeighbors().values()) {
+                if (territory.getTerritoryOwner() == this && !visitedTerritory.contains(territory)) {
+                    visitedTerritory.add(territory);
+                    territoryQueue.add(territory);
+                }
+            }
         }
-        return true;
+
+        return false;
     }
 
     /**

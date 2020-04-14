@@ -17,7 +17,7 @@ public class MoveOrder extends Order {
         this.aim = aim;
         this.type = "move";
         if (source.getTerritoryUnits() >= num) {
-            this.source.reduceUnits(num);
+            //this.source.reduceUnits(num);
             this.numUnits = num;
         } else {
             promptFail();
@@ -33,7 +33,7 @@ public class MoveOrder extends Order {
      * @Date: 2020/4/13
      */
     private void promptFail() {
-        System.out.println("Move order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
+        throw new IllegalArgumentException("Move order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
     }
 
     /**
@@ -44,7 +44,8 @@ public class MoveOrder extends Order {
     * @Date: 2020/4/13
     */
     private void runOrder() {
-        aim.increaseUnits(numUnits);
+        this.source.reduceUnits(this.numUnits);
+        this.aim.increaseUnits(this.numUnits);
     }
 
     /**
@@ -56,8 +57,7 @@ public class MoveOrder extends Order {
      */
     @Override
     public void execute() {
-        if (checkLegal())
-            runOrder();
+        runOrder();
     }
 
     /**
@@ -69,7 +69,7 @@ public class MoveOrder extends Order {
      */
     @Override
     public boolean checkLegal() {
-        return player.checkReachable(source, aim);
+        return this.numUnits >= 0 && this.numUnits <= source.getTerritoryUnits() && player.checkReachable(source, aim);
     }
 
     /**

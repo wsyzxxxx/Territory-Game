@@ -2,21 +2,19 @@ package edu.duke651.wlt.client;
 
 import edu.duke651.wlt.models.*;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
 /**
  * @Author: Tong
  * @Description: the only class get input from players
- * @Pattern:Singleton
+ * @Pattern: Singleton
  * @Modified by: Will
  */
-
 public class Interpreter {
-    private static Interpreter instance = new Interpreter();
-    private Printer printer;
-    private Scanner scanner;
+    private static final Interpreter instance = new Interpreter();
+    private final Printer printer;
+    private final Scanner scanner;
     private String source;
     private String aim;
 
@@ -29,6 +27,7 @@ public class Interpreter {
         return instance;
     }
 
+// for future use
 //    public void getGroupSelection(Player player, Map<String, ArrayList<Territory>> territoryGroup) {
 //        if(territoryGroup.isEmpty()){
 //            System.out.println("No more territories group to choose!");

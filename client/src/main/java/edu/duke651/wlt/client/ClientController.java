@@ -13,17 +13,17 @@ import java.util.*;
  */
 
 public class ClientController {
-    private ServerHandler serverHandler;
+    private final ServerHandler serverHandler;
     private Map<String, Player> playerMap;
     private Map<String, Territory> territoryMap;
-    private Interpreter interpreter;
-    private Printer printer;
+    private final Interpreter interpreter;
+    private final Printer printer;
     private String playerName;
     //use two lists to store the orders get from player, ready to send it to server
     private ArrayList<Order> moveOrders;
     private ArrayList<Order> attackOrders;
 
-    //intialize the controller fields
+    //initialize the controller fields
     public ClientController() throws IOException {
         this.interpreter = Interpreter.getInstance();
         this.printer = Printer.getInstance();

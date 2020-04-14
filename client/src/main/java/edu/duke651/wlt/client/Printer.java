@@ -15,8 +15,8 @@ import java.util.Objects;
  */
 
 public class Printer {
-    private PromptBase promptBase;
-    private static Printer printer = new Printer();
+    private final PromptBase promptBase;
+    private static final Printer printer = new Printer();
 
     private Printer() {
         promptBase = new PromptBase();
@@ -75,7 +75,7 @@ public class Printer {
     public void printUnits_prompt() {
         System.out.println(PromptBase.UNITS_PROMPT);
     }
-    //print anction choices
+    //print action choices
     public void printActionChoice() {
         System.out.println(PromptBase.ACTION_CHOICE_PROMPT);
     }
@@ -100,27 +100,33 @@ public class Printer {
     public void printCurrMapWithoutPlayer(Map<String, Territory> territoryMap) {
         System.out.println(promptBase.currMap_Prompt_WithoutPlayer(territoryMap));
     }
+
     //not used function
     public void printTerritoryChoice_prompt() {
         System.out.println(PromptBase.TERRITORY_CHOICE_PROMPT);
     }
+
     //not used function
     public void printFinishSelection_prompt() {
         System.out.println(PromptBase.FINISH_SELECTION_PROMPT);
     }
+
     //not used function
     public void printInvalidChoice_prompt() {
         System.out.println(PromptBase.INVALID_CHOICE_PROMPT);
     }
+
     //not used function
     public void printCurrTerritories_Prompt(Player player) {
         System.out.println(promptBase.currTerritories_Prompt(player));
     }
+
     //not used function
     public void printPlayerResult_Prompt(Player player, Map<String, Territory> territoryMap) {
         String tmp = promptBase.playerResult_Prompt(player, territoryMap);
         System.out.println(Objects.requireNonNullElse(tmp, "the game is still going on"));
     }
+
     //not used function
     public void printSelectTerritories_Prompt(Player player, Map<String, ArrayList<Territory>> territoryGroup){
         String a = promptBase.selectTerritories_prompt(player, territoryGroup);

@@ -1,7 +1,6 @@
 package edu.duke651.wlt.server;
 
 import edu.duke651.wlt.models.*;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -47,6 +47,7 @@ public class PromptBase {
         }
         return init.toString();
     }
+
     //not used
     public String selectTerritories_prompt(Player player, Map<String, ArrayList<Territory>> territoryGroup){
         return "Now select your three territories: \n" +

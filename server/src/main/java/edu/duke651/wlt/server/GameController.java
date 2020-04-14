@@ -1,16 +1,10 @@
 package edu.duke651.wlt.server;
 
 import edu.duke651.wlt.models.*;
-import org.json.JSONObject;
-import org.json.JSONString;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @program: wlt-risc
@@ -22,8 +16,8 @@ public class GameController {
     private HashMap<String, Player> players;
     private HashMap<Player, LinkInfo> playerLinkInfoHashMap;
     private HashMap<String, Territory> territoryMap;
-    private MessageSender messageSender;
-    private MessageReceiver messageReceiver;
+    private final MessageSender messageSender;
+    private final MessageReceiver messageReceiver;
     private ArrayList<ArrayList<Territory>> territoryGroups;
 
     /**
@@ -108,33 +102,69 @@ public class GameController {
         //broadcast the map and player setting
         messageSender.sendResults(playerLinkInfoHashMap, territoryMap);
 
-        //request new orders
-        //for (LinkInfo linkInfo : playerLinkInfoHashMap.values())
-        //messageSender.sendMessage(linkInfo, oneJSONObject);
-
         //receive new orders
+        Set<Player> illegalPlayerSet = new HashSet<>();
         ArrayList<Order> moveOrders = new ArrayList<>();
         ArrayList<Order> attackOrders = new ArrayList<>();
+        ArrayList<Order> allOrders = new ArrayList<>();
         for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
             if (players.containsKey(linkInfo.getPlayerName())) {
                 try {
                     moveOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
                     attackOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error order with player " + linkInfo.getPlayerName());
+                    illegalPlayerSet.add(players.get(linkInfo.getPlayerName()));
                 } catch (Exception e) {
                     System.out.println("Network error with player " + linkInfo.getPlayerName());
                 }
             }
         }
+        allOrders.addAll(moveOrders);
+        allOrders.addAll(attackOrders);
 
-        //miss simulation execution here. This seems OK with current layout.
-        //execute new orders
-        //move orders first
-        for(Order order: moveOrders) {
-            order.execute();
+        System.out.println("check orders...");
+        //check if the orders are legal
+        for (Territory territory : territoryMap.values()) {
+            if (illegalPlayerSet.contains(territory.getTerritoryOwner())) continue;
+            int numCount = 0;
+            for (Order order: allOrders) {
+                if (territory == order.getSource()) {
+                    numCount += order.getNumUnits();
+                }
+                if (!order.checkLegal()) {
+                    illegalPlayerSet.add(territory.getTerritoryOwner());
+                    break;
+                }
+            }
+            if (numCount > territory.getTerritoryUnits()) {
+                System.out.println("Illegal sum");
+                illegalPlayerSet.add(territory.getTerritoryOwner());
+            }
         }
-        //attack order second
-        for(Order order: attackOrders) {
-            order.execute();
+
+        System.out.println("move out units...");
+        //execute new orders
+        //moveOut phase
+        for (Order order : allOrders) {
+            if (!illegalPlayerSet.contains(order.getPlayer())) {
+                order.moveOut();
+            }
+        }
+
+        System.out.println("execute orders...");
+        //moveIn and attack phase
+        //move orders first
+        for (Order order : moveOrders) {
+            if (!illegalPlayerSet.contains(order.getPlayer())) {
+                order.execute();
+            }
+        }
+        //attack orders then
+        for (Order order: attackOrders) {
+            if (!illegalPlayerSet.contains(order.getPlayer())) {
+                order.execute();
+            }
         }
         //increment territory unit by 1
         for (Territory territory : territoryMap.values()) {
@@ -190,8 +220,12 @@ public class GameController {
             }
             //messageSender.sendTerritoryList(playerLinkInfoHashMap.get(player), territoryArrayList);
             territoryGroups.remove(territoryArrayList);
-        }
 
+            //assign units
+            for (int i = 0; i < ServerSetting.INIT_UNITS; i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseUnits(1);
+            }
+        }
     }
 
     /**

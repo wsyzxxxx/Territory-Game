@@ -21,6 +21,19 @@ public abstract class Order {
     //methods:
     public abstract void execute();
     public abstract boolean checkLegal();
+    public Territory getSource() {
+        return this.source;
+    }
+    public Player getPlayer() {
+        return this.player;
+    }
+    public int getNumUnits() {
+        return this.numUnits;
+    }
+    public void moveOut() {
+        this.source.reduceUnits(this.numUnits);
+    }
+    //public abstract boolean checkSourceAndAim();
     public JSONObject serialize() {
         JSONObject orderObject = new JSONObject();
         orderObject.put("type", this.type);

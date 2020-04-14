@@ -18,7 +18,7 @@ public class AttackOrder extends Order {
         this.aim = aim;
         this.type = "attack";
         if (source.getTerritoryUnits() >= num) {
-            this.source.reduceUnits(num);
+            //this.source.reduceUnits(num);
             this.numUnits = num;
         }
         else {
@@ -35,7 +35,7 @@ public class AttackOrder extends Order {
     * @Date: 2020/4/13
     */
     private void promptFail() {
-        System.out.println("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
+        throw new IllegalArgumentException("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
     }
 
     /**
@@ -46,6 +46,13 @@ public class AttackOrder extends Order {
     * @Date: 2020/4/13
     */
     private void runOrder() {
+        //the place has been occupied
+        if (aim.getTerritoryOwner() == source.getTerritoryOwner()) {
+            aim.increaseUnits(this.numUnits);
+            return;
+        }
+
+        //attack
         Random dice = new Random();
         int attackUnits = numUnits;
         int defendUnits = aim.getTerritoryUnits();
@@ -78,11 +85,11 @@ public class AttackOrder extends Order {
     */
     @Override
     public void execute() {
-        if (checkLegal())
-            runOrder();
+        //if (checkLegal())
+        runOrder();
         //if the territory is taken by self's another army from another territory, then just add the numUnits.
-        else if (source.checkNeighbor(aim) && aim.getTerritoryOwner().equals(player))
-            aim.increaseUnits(numUnits);
+        //else if (source.checkNeighbor(aim) && aim.getTerritoryOwner().equals(player))
+        //    aim.increaseUnits(numUnits);
     }
 
     /**
@@ -94,7 +101,11 @@ public class AttackOrder extends Order {
     */
     @Override
     public boolean checkLegal() {
-        return source.checkNeighbor(aim) && !aim.getTerritoryOwner().equals(player);
+        return this.numUnits >= 0 &&
+               this.numUnits <= this.source.getTerritoryUnits() &&
+               this.source.checkNeighbor(aim) &&
+               this.source.getTerritoryOwner() == this.player &&
+               this.aim.getTerritoryOwner() != this.player;
     }
 
     /**
