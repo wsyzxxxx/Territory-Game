@@ -82,21 +82,6 @@ public class Player {
     public boolean checkReachable(Territory source, Territory aim) {
         if (source.getTerritoryOwner() != this || aim.getTerritoryOwner() != this)
             return false;
-//        Territory curr = source;
-//        ArrayList<Territory> checked = new ArrayList<>();
-//        ArrayList<Territory> toCheck = new ArrayList<>();
-//        toCheck.add(curr);
-//        while (!curr.checkNeighbor(aim)) {
-//            checked.add(curr);
-//            for (Territory t : curr.getTerritoryNeighbors().values()) {
-//                if (!checked.contains(t) && t.getTerritoryOwner().equals(source.getTerritoryOwner())) toCheck.add(t);
-//            }
-//            toCheck.remove(curr);
-//            if (toCheck.isEmpty()) return false;
-//            curr = toCheck.get(0);
-//        }
-//        return true;
-
         //BFS to search the destination
         Queue<Territory> territoryQueue = new LinkedList<>();
         Set<Territory> visitedTerritory = new HashSet<>();
@@ -105,11 +90,9 @@ public class Player {
 
         while (!territoryQueue.isEmpty()) {
             Territory curr = territoryQueue.poll();
-
             if (curr == aim) {
                 return true;
             }
-
             for (Territory territory : curr.getTerritoryNeighbors().values()) {
                 if (territory.getTerritoryOwner() == this && !visitedTerritory.contains(territory)) {
                     visitedTerritory.add(territory);

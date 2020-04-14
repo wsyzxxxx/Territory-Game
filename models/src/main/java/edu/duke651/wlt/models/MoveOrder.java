@@ -69,7 +69,9 @@ public class MoveOrder extends Order {
      */
     @Override
     public boolean checkLegal() {
-        return this.numUnits >= 0 && this.numUnits <= source.getTerritoryUnits() && player.checkReachable(source, aim);
+        return this.numUnits >= 0 &&
+               this.numUnits <= source.getTerritoryUnits() &&
+               player.checkReachable(source, aim);
     }
 
     /**
