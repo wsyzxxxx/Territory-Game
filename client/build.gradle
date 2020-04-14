@@ -18,3 +18,7 @@ application {
     // Define the main class for the application.
     mainClassName = 'edu.duke651.wlt.client.Client'
 }
+
+run {
+    standardInput = System.in
+}

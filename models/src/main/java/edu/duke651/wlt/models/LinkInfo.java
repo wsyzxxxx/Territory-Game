@@ -36,17 +36,31 @@ public class LinkInfo {
         this.playerName = playerName;
     }
 
+    /**
+     * @Description: This function is to read the message through network
+     * @Param: [socket]
+     * @return:
+     * @Author: Will
+     * @Date: 2020/4/13
+     */
     public String readMessage() throws IOException {
         String res = this.bufferedReader.readLine();
-        System.out.println("receive message! " + res);
+        //System.out.println("receive message! " + res);
         return res;
     }
 
+    /**
+     * @Description: This function is to send the message through network
+     * @Param: [socket]
+     * @return:
+     * @Author: Will
+     * @Date: 2020/4/13
+     */
     public void sendMessage(String message) throws IOException {
         this.bufferedWriter.write(message);
         this.bufferedWriter.newLine();
         this.bufferedWriter.flush();
-        System.out.println("Send message! " + message);
+        //System.out.println("Send message! " + message);
     }
 
     public boolean isAlive() {
