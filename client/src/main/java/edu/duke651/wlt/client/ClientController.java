@@ -71,10 +71,13 @@ public class ClientController {
                     this.serverHandler.sendOrders(moveOrders);
                     //send attack orders
                     this.serverHandler.sendOrders(attackOrders);
-                }
 
-                //wait for next rounds
-                printer.printMessage("Waiting for other players......");
+                    //wait for next rounds
+                    printer.printMessage("Waiting for other players......");
+                } else {
+                    //lost prompt
+                    printer.printMessage("You have lost, but you can continue watching the game.");
+                }
             }
         } catch (IllegalStateException e) {
             printer.printMessage("Game over! The winner is: " + e.getMessage());
