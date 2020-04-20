@@ -19,6 +19,8 @@ public class Territory {
     private Player territoryOwner;
     private int territoryUnits;
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
+    private int resourceGenerate = 20;
+    private int size = 5;
 
     /**
     * @Description: This is the constructor with only territory name.
@@ -46,6 +48,15 @@ public class Territory {
     }
 
     //methods:
+
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 
     public void increaseUnits(int num) {
         this.territoryUnits += num;
@@ -93,6 +104,10 @@ public class Territory {
 
     public void setTerritoryUnits(int territoryUnits) {
         this.territoryUnits = territoryUnits;
+    }
+
+    public int getResourceGenerate() {
+        return resourceGenerate;
     }
 
     /**

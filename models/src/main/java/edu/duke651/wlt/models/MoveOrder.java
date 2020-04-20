@@ -16,13 +16,19 @@ public class MoveOrder extends Order {
         this.source = source;
         this.aim = aim;
         this.type = "move";
-        if (source.getTerritoryUnits() >= num) {
+        int cost = getMoveCost();
+        if (source.getTerritoryUnits() >= num && source.getTerritoryOwner().getResources() >= cost) {
             //this.source.reduceUnits(num);
             this.numUnits = num;
         } else {
             promptFail();
             this.numUnits = 0;
         }
+    }
+
+    private int getMoveCost() {
+        //TODO
+        return 0;
     }
 
     /**

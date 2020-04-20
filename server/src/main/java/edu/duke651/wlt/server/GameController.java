@@ -166,9 +166,33 @@ public class GameController {
                 order.execute();
             }
         }
-        //increment territory unit by 1
+        incrementTerritoryUnit();
+        incrementResource();
+    }
+
+    /**
+    * @Description: This function incrementTerritoryUnit is to increment territory unit by 1.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/20
+    */
+    private void incrementTerritoryUnit() {
         for (Territory territory : territoryMap.values()) {
             territory.incrementUnits();
+        }
+    }
+
+    /**
+    * @Description: This function incrementResource is to increment players' resource.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/20
+    */
+    private void incrementResource() {
+        for (Player player : players.values()) {
+            player.collectResource();
         }
     }
 
