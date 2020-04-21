@@ -52,6 +52,14 @@ public class Territory {
     //methods:
 
 
+    public ArrayList<Integer> getTerritoryUnitsInLevel() {
+        return territoryUnitsInLevel;
+    }
+
+    public void setTerritoryUnitsInLevel(ArrayList<Integer> territoryUnitsInLevel) {
+        this.territoryUnitsInLevel = territoryUnitsInLevel;
+    }
+
     public int getSize() {
         return size;
     }
