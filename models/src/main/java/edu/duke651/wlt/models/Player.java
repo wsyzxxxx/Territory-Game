@@ -62,7 +62,7 @@ public class Player {
         this.techLevel = techLevel;
     }
 
-    public int getMinimumMoveSize(Territory source, Territory aim) {
+    public int getMinimumMoveSize (Territory source, Territory aim) {
         //TODO
 //        Deque<Territory> shortestPath = getShortestPath(source, aim);
 //        int minimumSize = 0;

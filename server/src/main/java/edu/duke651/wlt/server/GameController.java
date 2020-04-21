@@ -167,6 +167,7 @@ public class GameController {
             }
         }
         incrementTerritoryUnit();
+        //This is for EVO2
         incrementResource();
     }
 

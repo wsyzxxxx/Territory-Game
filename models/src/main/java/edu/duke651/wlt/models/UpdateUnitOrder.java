@@ -10,9 +10,8 @@ import java.util.Arrays;
  * @create: 2020-04-20 12:08
  **/
 public class UpdateUnitOrder extends Order{
-    //TODO
     private Territory source;
-    private int cost = 0;
+    private int cost;
     private ArrayList<Integer> unitsAfterUpdate;
 
     /**
@@ -46,6 +45,20 @@ public class UpdateUnitOrder extends Order{
         return afterCost - beforeCost;
     }
 
+    /**
+    * @Description: This function getRequireLevel is to check the required tech level for one update order.
+    * @Param: []
+    * @return: int
+    * @Author: Leo
+    * @Date: 2020/4/22
+    */
+    public int getRequireLevel() {
+        for (int i = this.unitsAfterUpdate.size() - 1; i > 0; --i) {
+            if (this.unitsAfterUpdate.get(i) != 0) return i;
+        }
+        return 0;
+    }
+
     @Override
     public void execute() {
         this.source.setTerritoryUnitsInLevel(this.unitsAfterUpdate);
@@ -53,6 +66,6 @@ public class UpdateUnitOrder extends Order{
 
     @Override
     public boolean checkLegal() {
-        return this.player.getResources() >= cost;
+        return this.player.getResources() >= cost && getRequireLevel() <= this.player.getTechLevel();
     }
 }

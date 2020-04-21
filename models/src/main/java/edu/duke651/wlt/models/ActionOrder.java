@@ -2,6 +2,8 @@ package edu.duke651.wlt.models;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * @program: wlt-risc
  * @description: This is the order class which is abstract class of all orders
@@ -13,8 +15,21 @@ public abstract class ActionOrder extends Order {
     protected Territory source;
     protected Territory aim;
     protected int numUnits;
+    protected int cost;
+    //This is for EVO2
+    protected ArrayList<Integer> units;
 
     //methods:
+    public abstract int getCost();
+
+    public ArrayList<Integer> getUnits() {
+        return units;
+    }
+
+    public void setUnits(ArrayList<Integer> units) {
+        this.units = units;
+    }
+
     public Territory getSource() {
         return this.source;
     }

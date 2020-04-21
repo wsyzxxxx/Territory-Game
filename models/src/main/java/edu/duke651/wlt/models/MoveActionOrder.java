@@ -2,6 +2,7 @@ package edu.duke651.wlt.models;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ public class MoveActionOrder extends ActionOrder {
         this.source = source;
         this.aim = aim;
         this.type = "move";
-        int cost = getMoveCost();
+        this.cost = getCost();
         if (source.getTerritoryUnits() >= num && source.getTerritoryOwner().getResources() >= cost) {
             //this.source.reduceUnits(num);
             this.numUnits = num;
@@ -26,9 +27,9 @@ public class MoveActionOrder extends ActionOrder {
         }
     }
 
-    private int getMoveCost() {
+    public int getCost() {
         //TODO
-        return 0;
+        return this.player.getMinimumMoveSize(source, aim) * numUnits;
     }
 
     /**

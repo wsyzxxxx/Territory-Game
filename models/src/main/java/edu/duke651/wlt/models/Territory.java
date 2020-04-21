@@ -21,7 +21,7 @@ public class Territory {
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
     private int resourceGenerate = 20;
     private int size = 5;
-    //This is an array of numbers of different level of units.
+    //This is an array of numbers of different level of units. [0] is number of units of level 0.
     private ArrayList<Integer> territoryUnitsInLevel = new ArrayList<>(Collections.nCopies(7, 0));
 
     /**
@@ -51,6 +51,9 @@ public class Territory {
 
     //methods:
 
+    public void setResourceGenerate(int resourceGenerate) {
+        this.resourceGenerate = resourceGenerate;
+    }
 
     public ArrayList<Integer> getTerritoryUnitsInLevel() {
         return territoryUnitsInLevel;
