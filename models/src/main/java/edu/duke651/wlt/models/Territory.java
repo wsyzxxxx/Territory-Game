@@ -4,8 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * @program: wlt-risc
@@ -21,6 +21,8 @@ public class Territory {
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
     private int resourceGenerate = 20;
     private int size = 5;
+    //This is an array of numbers of different level of units.
+    private ArrayList<Integer> territoryUnitsInLevel = new ArrayList<>(Collections.nCopies(7, 0));
 
     /**
     * @Description: This is the constructor with only territory name.
@@ -67,6 +69,7 @@ public class Territory {
     }
 
     public void incrementUnits() {
+        this.territoryUnitsInLevel.set(0, this.territoryUnitsInLevel.get(0) + 1);
         ++this.territoryUnits;
     }
 

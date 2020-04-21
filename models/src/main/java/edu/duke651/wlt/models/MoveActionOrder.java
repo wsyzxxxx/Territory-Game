@@ -6,12 +6,12 @@ import java.util.Map;
 
 /**
  * @program: wlt-risc
- * @description: This is an inheritance of Order Class, moving units from one territory to another reachable one.
+ * @description: This is an inheritance of ActionOrder Class, moving units from one territory to another reachable one.
  * @author: Leo
  * @create: 2020-04-09 12:15
  **/
-public class MoveOrder extends Order {
-    public MoveOrder(Player player, Territory source, Territory aim, int num) {
+public class MoveActionOrder extends ActionOrder {
+    public MoveActionOrder(Player player, Territory source, Territory aim, int num) {
         this.player = player;
         this.source = source;
         this.aim = aim;
@@ -82,12 +82,12 @@ public class MoveOrder extends Order {
     /**
      * @Description: This function deserialize is to generate new order based on info received by server from clients.
      * @Param: [moveObject, playerMap, territoryMap]
-     * @return: edu.duke651.wlt.models.AttackOrder
+     * @return: edu.duke651.wlt.models.AttackActionOrder
      * @Author: Will
      * @Date: 2020/4/13
      */
-    public static MoveOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
-        return new MoveOrder(playerMap.get(moveObject.getString("player")),
+    public static MoveActionOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
+        return new MoveActionOrder(playerMap.get(moveObject.getString("player")),
                 territoryMap.get(moveObject.getString("source")),
                 territoryMap.get(moveObject.getString("aim")),
                 moveObject.getInt("num"));

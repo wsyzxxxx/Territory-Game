@@ -74,7 +74,7 @@ public class Interpreter {
     //get single order from input,
     // @Parameter: player who make the input,
     // @Parameter: territoryMap who stores all information about territories
-    public Order getOrder(Player player, Map<String, Territory> territoryMap) {
+    public ActionOrder getOrder(Player player, Map<String, Territory> territoryMap) {
         //show the map? . no just show once , so need to be called in ClientController
         printer.printActionChoice();
         while(true) {
@@ -160,14 +160,14 @@ public class Interpreter {
     //get attack order from input,
     // @Parameter: player who make the input,
     // @Parameter: territoryMap who stores all information about territories
-    AttackOrder getAttack(Player player, Map<String, Territory> territoryMap) {
-        return new AttackOrder(player, getSource(player), getAttackPlace(player, territoryMap), getUnits(player));
+    AttackActionOrder getAttack(Player player, Map<String, Territory> territoryMap) {
+        return new AttackActionOrder(player, getSource(player), getAttackPlace(player, territoryMap), getUnits(player));
     }
     //get move order from input,
     // @Parameter: player who make the input,
     // @Parameter: territoryMap who stores all information about territories
-    MoveOrder getMove(Player player) {
-        return new MoveOrder(player, getSource(player), getAim(player), getUnits(player));
+    MoveActionOrder getMove(Player player) {
+        return new MoveActionOrder(player, getSource(player), getAim(player), getUnits(player));
     }
     //get input from player
     String getStringInput() {

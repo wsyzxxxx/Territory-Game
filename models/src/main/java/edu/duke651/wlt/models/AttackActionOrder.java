@@ -7,12 +7,12 @@ import java.util.Random;
 
 /**
  * @program: wlt-risc
- * @description: This is an inheritance of Order Class
+ * @description: This is an inheritance of ActionOrder Class
  * @author: Leo
  * @create: 2020-04-09 12:16
  **/
-public class AttackOrder extends Order {
-    public AttackOrder(Player player, Territory source, Territory aim, int num) {
+public class AttackActionOrder extends ActionOrder {
+    public AttackActionOrder(Player player, Territory source, Territory aim, int num) {
         this.player = player;
         this.source = source;
         this.aim = aim;
@@ -111,12 +111,12 @@ public class AttackOrder extends Order {
     /**
     * @Description: This function deserialize is to generate new order based on info received by server from clients.
     * @Param: [moveObject, playerMap, territoryMap]
-    * @return: edu.duke651.wlt.models.AttackOrder
+    * @return: edu.duke651.wlt.models.AttackActionOrder
     * @Author: Will
     * @Date: 2020/4/13
     */
-    public static AttackOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
-        return new AttackOrder(playerMap.get(moveObject.getString("player")),
+    public static AttackActionOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
+        return new AttackActionOrder(playerMap.get(moveObject.getString("player")),
                 territoryMap.get(moveObject.getString("source")),
                 territoryMap.get(moveObject.getString("aim")),
                 moveObject.getInt("num"));

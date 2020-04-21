@@ -17,6 +17,7 @@ public class Player {
     private String playerName;
     private HashMap<String, Territory> territories = new HashMap<>();
     private int resources = 0;
+    private int techLevel = 1;
 
     //constructors
     public Player(String playerName) {
@@ -53,17 +54,23 @@ public class Player {
         return resources;
     }
 
-    public int getMinimumMoveSize(Territory source, Territory aim) {
-        Deque<Territory> shortestPath = getShortestPath(source, aim);
-        int minimumSize = 0;
-        while (!shortestPath.isEmpty()) {
-            Territory territory = shortestPath.pollFirst();
-            minimumSize += territory.getSize();
-        }
+    public int getTechLevel() {
+        return techLevel;
     }
 
-    public Deque<Territory> getShortestPath(Territory source, Territory aim) {
+    public void setTechLevel(int techLevel) {
+        this.techLevel = techLevel;
+    }
 
+    public int getMinimumMoveSize(Territory source, Territory aim) {
+        //TODO
+//        Deque<Territory> shortestPath = getShortestPath(source, aim);
+//        int minimumSize = 0;
+//        while (!shortestPath.isEmpty()) {
+//            Territory territory = shortestPath.pollFirst();
+//            minimumSize += territory.getSize();
+//        }
+        return 0;
     }
 
     /**

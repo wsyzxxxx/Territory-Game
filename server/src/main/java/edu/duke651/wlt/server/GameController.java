@@ -104,14 +104,14 @@ public class GameController {
 
         //receive new orders
         Set<Player> illegalPlayerSet = new HashSet<>();
-        ArrayList<Order> moveOrders = new ArrayList<>();
-        ArrayList<Order> attackOrders = new ArrayList<>();
-        ArrayList<Order> allOrders = new ArrayList<>();
+        ArrayList<ActionOrder> moveActionOrders = new ArrayList<>();
+        ArrayList<ActionOrder> attackActionOrders = new ArrayList<>();
+        ArrayList<ActionOrder> allActionOrders = new ArrayList<>();
         for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
             if (players.containsKey(linkInfo.getPlayerName())) {
                 try {
-                    moveOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
-                    attackOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
+                    moveActionOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
+                    attackActionOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
                 } catch (IllegalArgumentException e) {
                     System.out.println("Error order with player " + linkInfo.getPlayerName());
                     illegalPlayerSet.add(players.get(linkInfo.getPlayerName()));
@@ -120,19 +120,19 @@ public class GameController {
                 }
             }
         }
-        allOrders.addAll(moveOrders);
-        allOrders.addAll(attackOrders);
+        allActionOrders.addAll(moveActionOrders);
+        allActionOrders.addAll(attackActionOrders);
 
         System.out.println("check orders...");
         //check if the orders are legal
         for (Territory territory : territoryMap.values()) {
             if (illegalPlayerSet.contains(territory.getTerritoryOwner())) continue;
             int numCount = 0;
-            for (Order order: allOrders) {
-                if (territory == order.getSource()) {
-                    numCount += order.getNumUnits();
+            for (ActionOrder actionOrder : allActionOrders) {
+                if (territory == actionOrder.getSource()) {
+                    numCount += actionOrder.getNumUnits();
                 }
-                if (!order.checkLegal()) {
+                if (!actionOrder.checkLegal()) {
                     illegalPlayerSet.add(territory.getTerritoryOwner());
                     break;
                 }
@@ -146,24 +146,24 @@ public class GameController {
         System.out.println("move out units...");
         //execute new orders
         //moveOut phase
-        for (Order order : allOrders) {
-            if (!illegalPlayerSet.contains(order.getPlayer())) {
-                order.moveOut();
+        for (ActionOrder actionOrder : allActionOrders) {
+            if (!illegalPlayerSet.contains(actionOrder.getPlayer())) {
+                actionOrder.moveOut();
             }
         }
 
         System.out.println("execute orders...");
         //moveIn and attack phase
         //move orders first
-        for (Order order : moveOrders) {
-            if (!illegalPlayerSet.contains(order.getPlayer())) {
-                order.execute();
+        for (ActionOrder actionOrder : moveActionOrders) {
+            if (!illegalPlayerSet.contains(actionOrder.getPlayer())) {
+                actionOrder.execute();
             }
         }
         //attack orders then
-        for (Order order: attackOrders) {
-            if (!illegalPlayerSet.contains(order.getPlayer())) {
-                order.execute();
+        for (ActionOrder actionOrder : attackActionOrders) {
+            if (!illegalPlayerSet.contains(actionOrder.getPlayer())) {
+                actionOrder.execute();
             }
         }
         incrementTerritoryUnit();

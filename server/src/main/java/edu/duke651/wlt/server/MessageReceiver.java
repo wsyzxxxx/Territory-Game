@@ -18,17 +18,17 @@ public class MessageReceiver {
     /**
     * @Description: This function receiveNewTurn is to receive new messages, especially new orders, every turn of game.
     * @Param: [linkInfo, playerMap, territoryMap, requiredType]
-    * @return: java.util.ArrayList<edu.duke651.wlt.models.Order>
+    * @return: java.util.ArrayList<edu.duke651.wlt.models.ActionOrder>
     * @Author: Will
     * @Date: 2020/4/13
     */
-    public ArrayList<Order> receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap, String requiredType) throws IOException, JSONException, IllegalArgumentException {
+    public ArrayList<ActionOrder> receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap, String requiredType) throws IOException, JSONException, IllegalArgumentException {
         JSONObject turnObject = new JSONObject(linkInfo.readMessage());
         if (!turnObject.getString("status").equals("success")) {
             throw new IllegalArgumentException("Network error with player " + linkInfo.getPlayerName());
         }
 
-        ArrayList<Order> orderList = new ArrayList<>();
+        ArrayList<ActionOrder> actionOrderList = new ArrayList<>();
         turnObject.getJSONArray("data").forEach(element -> {
             if (!((JSONObject)element).getString("player").equals(linkInfo.getPlayerName()) ||
                 !((JSONObject)element).getString("type").equals(requiredType)) {
@@ -36,15 +36,15 @@ public class MessageReceiver {
             }
 
             if (((JSONObject)element).getString("type").equals("move")) {
-                orderList.add(MoveOrder.deserialize((JSONObject)element, playerMap, territoryMap));
+                actionOrderList.add(MoveActionOrder.deserialize((JSONObject)element, playerMap, territoryMap));
             } else if (((JSONObject)element).getString("type").equals("attack")) {
-                orderList.add(AttackOrder.deserialize((JSONObject)element, playerMap, territoryMap));
+                actionOrderList.add(AttackActionOrder.deserialize((JSONObject)element, playerMap, territoryMap));
             } else {
                 throw new IllegalArgumentException("Wrong order type with player " + linkInfo.getPlayerName());
             }
         });
 
-        return orderList;
+        return actionOrderList;
     }
 
     /**
