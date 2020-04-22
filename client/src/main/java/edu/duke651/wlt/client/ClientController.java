@@ -20,8 +20,8 @@ public class ClientController {
     private final Printer printer;
     private String playerName;
     //use two lists to store the orders get from player, ready to send it to server
-    private ArrayList<Order> moveOrders;
-    private ArrayList<Order> attackOrders;
+    private ArrayList<ActionOrder> moveActionOrders;
+    private ArrayList<ActionOrder> attackActionOrders;
 
     //initialize the controller fields
     public ClientController() throws IOException {
@@ -38,15 +38,15 @@ public class ClientController {
     //this is the only function can get the input from client
     //the goal it to get orders and store them in order lists.
     private void getOrders(){
-        this.moveOrders = new ArrayList<>();
-        this.attackOrders = new ArrayList<>();
+        this.moveActionOrders = new ArrayList<>();
+        this.attackActionOrders = new ArrayList<>();
         while (true) {
-            //get order
-            Order order = interpreter.getOrder(this.playerMap.get(playerName), territoryMap);
-            if (order instanceof AttackOrder) {
-                this.attackOrders.add(order);
-            } else if (order instanceof MoveOrder) {
-                this.moveOrders.add(order);
+            //get actionOrder
+            ActionOrder actionOrder = interpreter.getOrder(this.playerMap.get(playerName), territoryMap);
+            if (actionOrder instanceof AttackActionOrder) {
+                this.attackActionOrders.add(actionOrder);
+            } else if (actionOrder instanceof MoveActionOrder) {
+                this.moveActionOrders.add(actionOrder);
             } else {
                 break;
             }
@@ -68,9 +68,9 @@ public class ClientController {
                     //get all the new orders
                     getOrders();
                     //send move orders
-                    this.serverHandler.sendOrders(moveOrders);
+                    this.serverHandler.sendOrders(moveActionOrders);
                     //send attack orders
-                    this.serverHandler.sendOrders(attackOrders);
+                    this.serverHandler.sendOrders(attackActionOrders);
 
                     //wait for next rounds
                     printer.printMessage("Waiting for other players......");

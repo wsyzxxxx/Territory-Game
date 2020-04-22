@@ -4,8 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * @program: wlt-risc
@@ -19,6 +19,10 @@ public class Territory {
     private Player territoryOwner;
     private int territoryUnits;
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
+    private int resourceGenerate = 20;
+    private int size = 5;
+    //This is an array of numbers of different level of units. [0] is number of units of level 0.
+    private ArrayList<Integer> territoryUnitsInLevel = new ArrayList<>(Collections.nCopies(7, 0));
 
     /**
     * @Description: This is the constructor with only territory name.
@@ -47,6 +51,26 @@ public class Territory {
 
     //methods:
 
+    public void setResourceGenerate(int resourceGenerate) {
+        this.resourceGenerate = resourceGenerate;
+    }
+
+    public ArrayList<Integer> getTerritoryUnitsInLevel() {
+        return territoryUnitsInLevel;
+    }
+
+    public void setTerritoryUnitsInLevel(ArrayList<Integer> territoryUnitsInLevel) {
+        this.territoryUnitsInLevel = territoryUnitsInLevel;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
     public void increaseUnits(int num) {
         this.territoryUnits += num;
     }
@@ -56,6 +80,7 @@ public class Territory {
     }
 
     public void incrementUnits() {
+        this.territoryUnitsInLevel.set(0, this.territoryUnitsInLevel.get(0) + 1);
         ++this.territoryUnits;
     }
 
@@ -93,6 +118,10 @@ public class Territory {
 
     public void setTerritoryUnits(int territoryUnits) {
         this.territoryUnits = territoryUnits;
+    }
+
+    public int getResourceGenerate() {
+        return resourceGenerate;
     }
 
     /**

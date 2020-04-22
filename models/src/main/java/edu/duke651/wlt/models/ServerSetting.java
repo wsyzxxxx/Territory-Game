@@ -1,5 +1,7 @@
 package edu.duke651.wlt.models;
 
+import org.checkerframework.checker.units.qual.UnitsBottom;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,5 +22,38 @@ public class ServerSetting {
        put(3, "[[\"Narnia\", \"Midkemia\", \"Oz\"], [\"Gondor\", \"Mordor\", \"Hogwarts\"], [\"Elantris\", \"Scadrial\", \"Roshar\"]]");
        put(4, "[[\"Narnia\", \"Elantris\"], [\"Midkemia\", \"Oz\", \"Scadrial\"], [\"Gondor\", \"Mordor\"], [\"Hogwarts\", \"Roshar\"]]");
        put(5, "[[\"Narnia\", \"Midkemia\"], [\"Oz\", \"Gondor\"], [\"Mordor\", \"Hogwarts\"], [\"Elantris\"], [\"Scadrial\", \"Roshar\"]]");
+    }};
+
+    //Below is added for EVO2
+    /**
+    * @Description: This field is to keep techLevelCost in a map.
+    * @Param:
+    * @return:
+    * @Author: Leo
+    * @Date: 2020/4/21
+    */
+    public static final Map<Integer, Integer> TECH_LEVEL_COST_MAP = new HashMap<Integer, Integer>() {{
+        put(2, 50);
+        put(3, 75);
+        put(4, 125);
+        put(5, 200);
+        put(6, 300);
+    }};
+
+    /**
+    * @Description: This field is to keep unit information in a hash map.
+    * @Param:
+    * @return:
+    * @Author: Leo
+    * @Date: 2020/4/21
+    */
+    public static final Map<Integer, UnitInfo> UNIT_LEVEL_COST_MAP = new HashMap<Integer, UnitInfo>() {{
+       put(0, new UnitInfo(0, "Peasant", 0, 0));
+        put(1, new UnitInfo(1, "Archer", 1, 3));
+        put(2, new UnitInfo(2, "Swordsman", 3, 11));
+        put(3, new UnitInfo(3, "Crusader", 5, 30));
+        put(4, new UnitInfo(4, "Warrior", 8, 55));
+        put(5, new UnitInfo(5, "Cavalier", 11, 90));
+        put(6, new UnitInfo(6, "Paladin", 15, 140));
     }};
 }

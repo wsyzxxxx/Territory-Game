@@ -16,6 +16,8 @@ public class Player {
     //fields:
     private String playerName;
     private HashMap<String, Territory> territories = new HashMap<>();
+    private int resources = 0;
+    private int techLevel = 1;
 
     //constructors
     public Player(String playerName) {
@@ -48,8 +50,44 @@ public class Player {
         return territories;
     }
 
+    public int getResources() {
+        return resources;
+    }
+
+    public int getTechLevel() {
+        return techLevel;
+    }
+
+    public void setTechLevel(int techLevel) {
+        this.techLevel = techLevel;
+    }
+
+    public int getMinimumMoveSize (Territory source, Territory aim) {
+        //TODO
+//        Deque<Territory> shortestPath = getShortestPath(source, aim);
+//        int minimumSize = 0;
+//        while (!shortestPath.isEmpty()) {
+//            Territory territory = shortestPath.pollFirst();
+//            minimumSize += territory.getSize();
+//        }
+        return 0;
+    }
+
     /**
-     * @Description: This function updateTerritories is to replace existing territories with updatedList.
+    * @Description: This function collectResource is for a player to collect his resource from his territories.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/20
+    */
+    public void collectResource() {
+        for (Territory territory : territories.values()) {
+            this.resources += territory.getResourceGenerate();
+        }
+    }
+
+    /**
+     * @Description: This function setTerritories is to replace existing territories with updatedList.
      * @Param: [updatedList]
      * @return: void
      * @Author: Leo
