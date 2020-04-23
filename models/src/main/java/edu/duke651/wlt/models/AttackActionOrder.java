@@ -18,7 +18,7 @@ public class AttackActionOrder extends ActionOrder {
         this.source = source;
         this.aim = aim;
         this.type = "attack";
-        this.cost = getCost();
+        this.foodCost = calculateFoodCost();
         if (source.getTerritoryUnits() >= num) {
             //this.source.reduceUnits(num);
             this.numUnits = num;
@@ -58,7 +58,12 @@ public class AttackActionOrder extends ActionOrder {
         Random dice = new Random();
         int attackUnits = numUnits;
         int defendUnits = aim.getTerritoryUnits();
+
         //for EVO2
+
+        //consume food
+        this.player.consumeFoodResource(foodCost);
+        //attack
         boolean isAttackTurn = true;
         int attackerUpperBond = 6;
         int defenderUpperBond = 6;
@@ -166,7 +171,7 @@ public class AttackActionOrder extends ActionOrder {
     }
 
     @Override
-    public int getCost() {
+    public int calculateFoodCost() {
         return numUnits;
     }
 }

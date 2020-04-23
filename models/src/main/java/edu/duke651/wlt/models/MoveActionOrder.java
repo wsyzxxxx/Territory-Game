@@ -16,8 +16,8 @@ public class MoveActionOrder extends ActionOrder {
         this.source = source;
         this.aim = aim;
         this.type = "move";
-        this.cost = getCost();
-        if (source.getTerritoryUnits() >= num && source.getTerritoryOwner().getResources() >= cost) {
+        this.foodCost = calculateFoodCost();
+        if (source.getTerritoryUnits() >= num && source.getTerritoryOwner().getTechResources() >= foodCost) {
             //this.source.reduceUnits(num);
             this.numUnits = num;
         } else {
@@ -26,7 +26,7 @@ public class MoveActionOrder extends ActionOrder {
         }
     }
 
-    public int getCost() {
+    public int calculateFoodCost() {
         //TODO
         return this.player.getMinimumMoveSize(source, aim) * numUnits;
     }
@@ -51,6 +51,8 @@ public class MoveActionOrder extends ActionOrder {
     */
     private void runOrder() {
         this.aim.increaseUnits(this.numUnits, this.units);
+        //EVO2
+        this.player.consumeFoodResource(foodCost);
     }
 
     /**

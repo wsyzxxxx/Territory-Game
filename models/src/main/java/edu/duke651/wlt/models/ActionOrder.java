@@ -15,15 +15,19 @@ public abstract class ActionOrder extends Order {
     protected Territory source;
     protected Territory aim;
     protected int numUnits;
-    protected int cost;
+    protected int foodCost;
     //This is for EVO2
     protected ArrayList<Integer> units;
 
     //methods:
-    public abstract int getCost();
+    public abstract int calculateFoodCost();
 
     public ArrayList<Integer> getUnits() {
         return units;
+    }
+
+    public int getFoodCost() {
+        return foodCost;
     }
 
     public void setUnits(ArrayList<Integer> units) {

@@ -20,8 +20,10 @@ public class ServerSetting {
     public static final int INIT_UNITS = 15;
     public static final int INIT_SIZE_BASE = 5;
     public static final int INIT_SIZE = 50;
-    public static final int INIT_RESOURCE_GENERATE_LEVEL_BASE = 5;
-    public static final int INIT_RESOURCE_GENERATE_LEVEL = 60;
+    public static final int INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE = 5;
+    public static final int INIT_TECH_RESOURCE_GENERATE_LEVEL = 60;
+    public static final int INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE = 5;
+    public static final int INIT_FOOD_RESOURCE_GENERATE_LEVEL = 60;
     public static final Map<Integer, String> PLAYER_TERRITORY_GROUP_MAP = new HashMap<>() {{
         put(2, "[[\"Narnia\", \"Midkemia\", \"Oz\", \"Gondor\", \"Mordor\"], [\"Elantris\", \"Scadrial\", \"Roshar\", \"Hogwarts\"]]");
         put(3, "[[\"Narnia\", \"Midkemia\", \"Oz\"], [\"Gondor\", \"Mordor\", \"Hogwarts\"], [\"Elantris\", \"Scadrial\", \"Roshar\"]]");

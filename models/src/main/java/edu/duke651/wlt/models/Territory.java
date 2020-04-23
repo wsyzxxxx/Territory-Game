@@ -18,7 +18,8 @@ public class Territory {
     private Player territoryOwner;
     private int territoryUnits;
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
-    private int resourceGenerate = ServerSetting.INIT_RESOURCE_GENERATE_LEVEL_BASE;
+    private int techResourceGenerate = ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE;
+    private int foodResourceGenerate = ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE;
     private int size = ServerSetting.INIT_SIZE_BASE;
     //This is an array of numbers of different level of units. [0] is number of units of level 0.
     private ArrayList<Integer> territoryUnitsInLevel = new ArrayList<>(Collections.nCopies(7, 0));
@@ -50,8 +51,8 @@ public class Territory {
 
     //methods:
 
-    public void setResourceGenerate(int resourceGenerate) {
-        this.resourceGenerate = resourceGenerate;
+    public void setTechResourceGenerate(int techResourceGenerate) {
+        this.techResourceGenerate = techResourceGenerate;
     }
 
     public ArrayList<Integer> getTerritoryUnitsInLevel() {
@@ -60,6 +61,14 @@ public class Territory {
 
     public void setTerritoryUnitsInLevel(ArrayList<Integer> territoryUnitsInLevel) {
         this.territoryUnitsInLevel = territoryUnitsInLevel;
+    }
+
+    public int getFoodResourceGenerate() {
+        return foodResourceGenerate;
+    }
+
+    public void setFoodResourceGenerate(int foodResourceGenerate) {
+        this.foodResourceGenerate = foodResourceGenerate;
     }
 
     public int getSize() {
@@ -125,8 +134,8 @@ public class Territory {
         this.territoryUnits = territoryUnits;
     }
 
-    public int getResourceGenerate() {
-        return resourceGenerate;
+    public int getTechResourceGenerate() {
+        return techResourceGenerate;
     }
 
     /**
@@ -141,14 +150,25 @@ public class Territory {
     }
 
     /**
-    * @Description: This function increaseResourceGenerateLevel is for map's resource generate initialization.
+    * @Description: This function increaseResourceGenerateLevel is for map's tech resource generate initialization.
     * @Param: [resourceGenerateLevel]
     * @return: void
     * @Author: Leo
     * @Date: 2020/4/23
     */
-    public void increaseResourceGenerateLevel(int resourceGenerateLevel) {
-        this.resourceGenerate += resourceGenerateLevel;
+    public void increaseTechResourceGenerateLevel(int techResourceGenerateLevel) {
+        this.techResourceGenerate += techResourceGenerateLevel;
+    }
+
+    /**
+    * @Description: This function increaseFoodResourceGenerateLevel is for map's food resource generate initialization.
+    * @Param: [foodResourceGenerateLevel]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void increaseFoodResourceGenerateLevel(int foodResourceGenerateLevel) {
+        this.foodResourceGenerate += foodResourceGenerateLevel;
     }
 
     /**

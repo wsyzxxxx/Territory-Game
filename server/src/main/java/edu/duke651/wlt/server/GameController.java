@@ -185,7 +185,7 @@ public class GameController {
     }
 
     /**
-    * @Description: This function incrementResource is to increment players' resource.
+    * @Description: This function incrementResource is to increment players' tech and food resource.
     * @Param: []
     * @return: void
     * @Author: Leo
@@ -193,7 +193,8 @@ public class GameController {
     */
     private void incrementResource() {
         for (Player player : players.values()) {
-            player.collectResource();
+            player.collectTechResource();
+            player.collectFoodResource();
         }
     }
 
@@ -256,9 +257,14 @@ public class GameController {
                 territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseSize(1);
             }
 
-            //assign resourceGenerate
-            for (int i = 0; i < ServerSetting.INIT_RESOURCE_GENERATE_LEVEL - ServerSetting.INIT_RESOURCE_GENERATE_LEVEL_BASE * territoryArrayList.size(); i++) {
-                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseResourceGenerateLevel(1);
+            //assign techResourceGenerate
+            for (int i = 0; i < ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL - ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseTechResourceGenerateLevel(1);
+            }
+
+            //assign foodResourceGenerate
+            for (int i = 0; i < ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL - ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseFoodResourceGenerateLevel(1);
             }
         }
     }

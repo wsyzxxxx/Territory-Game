@@ -16,7 +16,8 @@ public class Player {
     //fields:
     private String playerName;
     private HashMap<String, Territory> territories = new HashMap<>();
-    private int resources = 0;
+    private int techResources = 0;
+    private int foodResources = 0;
     private int techLevel = 1;
 
     //constructors
@@ -50,8 +51,8 @@ public class Player {
         return territories;
     }
 
-    public int getResources() {
-        return resources;
+    public int getTechResources() {
+        return techResources;
     }
 
     public int getTechLevel() {
@@ -60,6 +61,14 @@ public class Player {
 
     public void setTechLevel(int techLevel) {
         this.techLevel = techLevel;
+    }
+
+    public int getFoodResources() {
+        return foodResources;
+    }
+
+    public void setFoodResources(int foodResources) {
+        this.foodResources = foodResources;
     }
 
     public int getMinimumMoveSize (Territory source, Territory aim) {
@@ -74,16 +83,51 @@ public class Player {
     }
 
     /**
-    * @Description: This function collectResource is for a player to collect his resource from his territories.
+    * @Description: This function collectResource is for a player to collect his tech resource from his territories.
     * @Param: []
     * @return: void
     * @Author: Leo
     * @Date: 2020/4/20
     */
-    public void collectResource() {
-        for (Territory territory : territories.values()) {
-            this.resources += territory.getResourceGenerate();
+    public void collectTechResource() {
+        for (Territory territory : this.territories.values()) {
+            this.techResources += territory.getTechResourceGenerate();
         }
+    }
+
+    /**
+    * @Description: This function collectFoodResource is to collect food resource from all territories.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void collectFoodResource() {
+        for (Territory territory : this.territories.values()) {
+            this.foodResources += territory.getFoodResourceGenerate();
+        }
+    }
+
+    /**
+    * @Description: This function reduceFoodResource is to consume food resource.
+    * @Param: [consume]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void consumeFoodResource(int consume) {
+        this.foodResources -= consume;
+    }
+
+    /**
+    * @Description: This function reduceTechResource is to consume tech resource.
+    * @Param: [consume]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void consumeTechResource(int consume) {
+        this.techResources -= consume;
     }
 
     /**
