@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -71,12 +70,18 @@ public class Territory {
         this.size = size;
     }
 
-    public void increaseUnits(int num) {
+    public void increaseUnits(int num, ArrayList<Integer> unitsArray) {
         this.territoryUnits += num;
+        for (int i = 0; i < this.territoryUnitsInLevel.size(); ++i) {
+            this.territoryUnitsInLevel.set(i, this.territoryUnitsInLevel.get(i) + unitsArray.get(i));
+        }
     }
 
-    public void reduceUnits(int num) {
+    public void reduceUnits(int num, ArrayList<Integer> unitsArray) {
         this.territoryUnits -= num;
+        for (int i = 0; i < this.territoryUnitsInLevel.size(); ++i) {
+            this.territoryUnitsInLevel.set(i, this.territoryUnitsInLevel.get(i) - unitsArray.get(i));
+        }
     }
 
     public void incrementUnits() {

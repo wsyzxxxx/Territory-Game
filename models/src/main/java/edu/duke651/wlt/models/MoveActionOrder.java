@@ -2,7 +2,6 @@ package edu.duke651.wlt.models;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -51,7 +50,7 @@ public class MoveActionOrder extends ActionOrder {
     * @Date: 2020/4/13
     */
     private void runOrder() {
-        this.aim.increaseUnits(this.numUnits);
+        this.aim.increaseUnits(this.numUnits, this.units);
     }
 
     /**

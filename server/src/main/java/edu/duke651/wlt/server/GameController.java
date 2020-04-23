@@ -248,7 +248,7 @@ public class GameController {
 
             //assign units
             for (int i = 0; i < ServerSetting.INIT_UNITS; i++) {
-                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseUnits(1);
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).incrementUnits();
             }
         }
     }

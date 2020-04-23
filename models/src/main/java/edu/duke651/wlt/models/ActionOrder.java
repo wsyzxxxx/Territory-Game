@@ -37,7 +37,7 @@ public abstract class ActionOrder extends Order {
         return this.numUnits;
     }
     public void moveOut() {
-        this.source.reduceUnits(this.numUnits);
+        this.source.reduceUnits(this.numUnits, this.units);
     }
     //public abstract boolean checkSourceAndAim();
     public JSONObject serialize() {

@@ -50,7 +50,7 @@ public class AttackActionOrder extends ActionOrder {
     private void runOrder() {
         //the place has been occupied
         if (aim.getTerritoryOwner() == this.player) {
-            aim.increaseUnits(this.numUnits);
+            aim.increaseUnits(this.numUnits, this.units);
             return;
         }
 
