@@ -250,6 +250,16 @@ public class GameController {
             for (int i = 0; i < ServerSetting.INIT_UNITS; i++) {
                 territoryArrayList.get(random.nextInt(territoryArrayList.size())).incrementUnits();
             }
+
+            //assign size
+            for (int i = 0; i < ServerSetting.INIT_SIZE - ServerSetting.INIT_SIZE_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseSize(1);
+            }
+
+            //assign resourceGenerate
+            for (int i = 0; i < ServerSetting.INIT_RESOURCE_GENERATE_LEVEL - ServerSetting.INIT_RESOURCE_GENERATE_LEVEL_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseResourceGenerateLevel(1);
+            }
         }
     }
 

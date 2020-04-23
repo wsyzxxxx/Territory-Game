@@ -18,8 +18,8 @@ public class Territory {
     private Player territoryOwner;
     private int territoryUnits;
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
-    private int resourceGenerate = 20;
-    private int size = 5;
+    private int resourceGenerate = ServerSetting.INIT_RESOURCE_GENERATE_LEVEL_BASE;
+    private int size = ServerSetting.INIT_SIZE_BASE;
     //This is an array of numbers of different level of units. [0] is number of units of level 0.
     private ArrayList<Integer> territoryUnitsInLevel = new ArrayList<>(Collections.nCopies(7, 0));
 
@@ -138,6 +138,28 @@ public class Territory {
     */
     public boolean checkNeighbor(Territory aim) {
         return territoryNeighbors.containsValue(aim);
+    }
+
+    /**
+    * @Description: This function increaseResourceGenerateLevel is for map's resource generate initialization.
+    * @Param: [resourceGenerateLevel]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/23
+    */
+    public void increaseResourceGenerateLevel(int resourceGenerateLevel) {
+        this.resourceGenerate += resourceGenerateLevel;
+    }
+
+    /**
+    * @Description: This function increaseSize is for map's size initialization.
+    * @Param: [size]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/23
+    */
+    public void increaseSize(int size) {
+        this.size += size;
     }
 
     /**
