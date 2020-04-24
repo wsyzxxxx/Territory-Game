@@ -105,27 +105,4 @@ public class GuiComponents {
             }
         }
     }
-    public Collection<Order> getMoveOrders() {
-        return moveOrders;
-    }
-
-    public void setMoveOrders(Collection<Order> moveOrders) {
-        this.moveOrders = moveOrders;
-    }
-
-    public Collection<Order> getAttackOrders() {
-        return attackOrders;
-    }
-
-    public void setAttackOrders(Collection<Order> attackOrders) {
-        this.attackOrders = attackOrders;
-    }
-
-    public Collection<Order> getUpgradeOrders() {
-        return upgradeOrders;
-    }
-
-    public void setUpgradeOrders(Collection<Order> upgradeOrders) {
-        this.upgradeOrders = upgradeOrders;
-    }
 }

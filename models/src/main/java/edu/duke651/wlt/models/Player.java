@@ -33,6 +33,14 @@ public class Player {
     }
 
     //methods:
+    public String getColor() {
+        return this.colorOnMap;
+    }
+
+    public void setColor(String color) {
+        this.colorOnMap = color;
+    }
+
     public void addTerritory(Territory t){
         territories.put(t.getTerritoryName(), t);
     }

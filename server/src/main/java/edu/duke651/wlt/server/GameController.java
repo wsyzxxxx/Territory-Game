@@ -284,7 +284,12 @@ public class GameController {
     private void assignTerritory() {
         //randomly assign territories to players
         Random random = new Random();
+        ArrayList<String> colorArray = new ArrayList<>(Arrays.asList(ServerSetting.COLOR_SET));
         for (Player player: players.values()) {
+            //assign color
+            player.setColor(colorArray.get(random.nextInt(colorArray.size())));
+            colorArray.remove(player.getColor());
+
             ArrayList<Territory> territoryArrayList = this.territoryGroups.get(random.nextInt(territoryGroups.size()));
             for (Territory territory: territoryArrayList) {
                 territory.setTerritoryOwner(player);

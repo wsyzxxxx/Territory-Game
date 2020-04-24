@@ -49,15 +49,15 @@ public class ServerHandler {
 
     /**
      * send the actionOrders of the current turn
-     * @param actionOrders the list of the actionOrders
+     * @param orders the list of the actionOrders
      * @throws IOException when network error happens
      */
-    public void sendOrders(ArrayList<ActionOrder> actionOrders) throws IOException{
+    public void sendOrders(ArrayList<Order> orders) throws IOException{
         JSONObject messageJSON = new JSONObject();
         messageJSON.put("status", SUCCESS);
 
         JSONArray orderList = new JSONArray();
-        actionOrders.forEach(order -> orderList.put(order.serialize()));
+        orders.forEach(order -> orderList.put(order.serialize()));
         messageJSON.put("data", orderList);
         linkInfo.sendMessage(messageJSON.toString());
     }

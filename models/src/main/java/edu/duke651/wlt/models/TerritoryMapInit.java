@@ -104,25 +104,6 @@ public class TerritoryMapInit {
             }
             territoryGroups.add(group);
         }
-//        //group 1
-//        ArrayList<Territory> groupOne = new ArrayList<>();
-//        groupOne.add(Narnia);
-//        groupOne.add(Midkemia);
-//        groupOne.add(Oz);
-//        //group 2
-//        ArrayList<Territory> groupTwo = new ArrayList<>();
-//        groupTwo.add(Elantris);
-//        groupTwo.add(Scadrial);
-//        groupTwo.add(Roshar);
-//        //group 3
-//        ArrayList<Territory> groupThree = new ArrayList<>();
-//        groupThree.add(Gondor);
-//        groupThree.add(Mordor);
-//        groupThree.add(Hogwarts);
-//        //put in
-//        territoryGroups.add(groupOne);
-//        territoryGroups.add(groupTwo);
-//        territoryGroups.add(groupThree);
     }
 
     /**

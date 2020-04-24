@@ -76,6 +76,16 @@ public class Territory {
         this.size = size;
     }
 
+    public ArrayList<String> getAttackTerritory() {
+        ArrayList<String> result = new ArrayList<>();
+        this.territoryNeighbors.forEach((k, v) -> {
+            if (v.getTerritoryOwner() != this.territoryOwner) {
+                result.add(k);
+            }
+        });
+        return result;
+    }
+
     public void increaseUnits(ArrayList<Integer> unitsArray) {
         for (int i = 0; i < this.territoryUnitsInLevel.size(); ++i) {
             this.territoryUnitsInLevel.set(i, this.territoryUnitsInLevel.get(i) + unitsArray.get(i));
