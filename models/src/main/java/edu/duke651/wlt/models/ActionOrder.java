@@ -1,5 +1,6 @@
 package edu.duke651.wlt.models;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -14,13 +15,11 @@ public abstract class ActionOrder extends Order {
     //fields:
     protected Territory source;
     protected Territory aim;
-    protected int numUnits;
-    protected int cost;
     //This is for EVO2
     protected ArrayList<Integer> units;
 
     //methods:
-    public abstract int getCost();
+    public abstract int calculateFoodCost();
 
     public ArrayList<Integer> getUnits() {
         return units;
@@ -33,11 +32,17 @@ public abstract class ActionOrder extends Order {
     public Territory getSource() {
         return this.source;
     }
-    public int getNumUnits() {
-        return this.numUnits;
-    }
+
     public void moveOut() {
-        this.source.reduceUnits(this.numUnits);
+        this.source.reduceUnits(this.units);
+    }
+
+    protected int sumUnits() {
+        int sum = 0;
+        for (Integer unit : this.units) {
+            sum += unit;
+        }
+        return sum;
     }
     //public abstract boolean checkSourceAndAim();
     public JSONObject serialize() {
@@ -46,7 +51,9 @@ public abstract class ActionOrder extends Order {
         orderObject.put("player", this.player.getPlayerName());
         orderObject.put("source", this.source.getTerritoryName());
         orderObject.put("aim", this.aim.getTerritoryName());
-        orderObject.put("num", this.numUnits);
+        JSONArray unitList = new JSONArray();
+        units.forEach(unitList::put);
+        orderObject.put("unitList", unitList);
 
         return orderObject;
     }

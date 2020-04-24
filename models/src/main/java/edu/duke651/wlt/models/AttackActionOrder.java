@@ -13,20 +13,12 @@ import java.util.Random;
  * @create: 2020-04-09 12:16
  **/
 public class AttackActionOrder extends ActionOrder {
-    public AttackActionOrder(Player player, Territory source, Territory aim, int num) {
+    public AttackActionOrder(Player player, Territory source, Territory aim, ArrayList<Integer> unitList) {
         this.player = player;
         this.source = source;
         this.aim = aim;
         this.type = "attack";
-        this.cost = getCost();
-        if (source.getTerritoryUnits() >= num) {
-            //this.source.reduceUnits(num);
-            this.numUnits = num;
-        }
-        else {
-            promptFail();
-            this.numUnits = 0;
-        }
+        this.units = unitList;
     }
 
     /**
@@ -37,28 +29,33 @@ public class AttackActionOrder extends ActionOrder {
     * @Date: 2020/4/13
     */
     private void promptFail() {
-        throw new IllegalArgumentException("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
+        throw new IllegalArgumentException("Attack order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + sumUnits() + " / available units: " + source.getTerritoryUnits());
     }
 
     /**
-    * @Description: This function runOrder is to run attack orders as instruction requires.
+    * @Description: This function execute is to run attack orders as instruction requires.
     * @Param: []
     * @return: void
     * @Author: Leo
     * @Date: 2020/4/13
     */
-    private void runOrder() {
+    public void execute() {
         //the place has been occupied
         if (aim.getTerritoryOwner() == this.player) {
-            aim.increaseUnits(this.numUnits);
+            aim.increaseUnits(this.units);
             return;
         }
 
         //attack
         Random dice = new Random();
-        int attackUnits = numUnits;
+        int attackUnits = sumUnits();
         int defendUnits = aim.getTerritoryUnits();
+
         //for EVO2
+
+        //consume food
+        this.player.consumeFoodResource(calculateFoodCost());
+        //attack
         boolean isAttackTurn = true;
         int attackerUpperBond = 6;
         int defenderUpperBond = 6;
@@ -69,13 +66,11 @@ public class AttackActionOrder extends ActionOrder {
         while (true) {
             System.out.println(player.getPlayerName() + ": from " + source.getTerritoryName() + " to " + aim.getTerritoryName() + "| AttackUnits: " + attackUnits + "; DefendUnits: " + defendUnits);
             if (attackUnits == 0) {
-                aim.setTerritoryUnits(defendUnits);
                 //for EVO2
                 aim.setTerritoryUnitsInLevel(defenders);
                 break;
             }
             if (defendUnits == 0) {
-                aim.setTerritoryUnits(attackUnits);
                 aim.getTerritoryOwner().removeTerritory(aim);
                 aim.setTerritoryOwner(player);
                 player.addTerritory(aim);
@@ -120,22 +115,6 @@ public class AttackActionOrder extends ActionOrder {
     }
 
     /**
-    * @Description: This function execute is to execute the order with some checks to ensure it executable.
-    * @Param: []
-    * @return: void
-    * @Author: Leo
-    * @Date: 2020/4/13
-    */
-    @Override
-    public void execute() {
-        //if (checkLegal())
-        runOrder();
-        //if the territory is taken by self's another army from another territory, then just add the numUnits.
-        //else if (source.checkNeighbor(aim) && aim.getTerritoryOwner().equals(player))
-        //    aim.increaseUnits(numUnits);
-    }
-
-    /**
     * @Description: This function checkLegal is to check whether the attack order is constructed correctly by checking whether attacking neighbor and its owner.
     * @Param: []
     * @return: boolean
@@ -144,11 +123,11 @@ public class AttackActionOrder extends ActionOrder {
     */
     @Override
     public boolean checkLegal() {
-        return this.numUnits >= 0 &&
-               this.numUnits <= this.source.getTerritoryUnits() &&
-               this.source.checkNeighbor(aim) &&
+        return this.source.checkNeighbor(aim) &&
                this.source.getTerritoryOwner() == this.player &&
-               this.aim.getTerritoryOwner() != this.player;
+               this.aim.getTerritoryOwner() != this.player &&
+               this.source.hasEnoughUnits(units) &&
+               this.player.getFoodResources() >= calculateFoodCost();
     }
 
     /**
@@ -159,14 +138,21 @@ public class AttackActionOrder extends ActionOrder {
     * @Date: 2020/4/13
     */
     public static AttackActionOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
+        ArrayList<Integer> unitList = new ArrayList<>();
+        moveObject.getJSONArray("unitList").forEach(e -> unitList.add((Integer)e));
+
+        if (unitList.size() != 7) {
+            throw new IllegalArgumentException("The unit size is not correct!");
+        }
+
         return new AttackActionOrder(playerMap.get(moveObject.getString("player")),
                 territoryMap.get(moveObject.getString("source")),
                 territoryMap.get(moveObject.getString("aim")),
-                moveObject.getInt("num"));
+                unitList);
     }
 
     @Override
-    public int getCost() {
-        return numUnits;
+    public int calculateFoodCost() {
+        return sumUnits();
     }
 }

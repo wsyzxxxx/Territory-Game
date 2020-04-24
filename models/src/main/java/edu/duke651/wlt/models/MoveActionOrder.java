@@ -12,24 +12,16 @@ import java.util.Map;
  * @create: 2020-04-09 12:15
  **/
 public class MoveActionOrder extends ActionOrder {
-    public MoveActionOrder(Player player, Territory source, Territory aim, int num) {
+    public MoveActionOrder(Player player, Territory source, Territory aim, ArrayList<Integer> unitList) {
         this.player = player;
         this.source = source;
         this.aim = aim;
         this.type = "move";
-        this.cost = getCost();
-        if (source.getTerritoryUnits() >= num && source.getTerritoryOwner().getResources() >= cost) {
-            //this.source.reduceUnits(num);
-            this.numUnits = num;
-        } else {
-            promptFail();
-            this.numUnits = 0;
-        }
+        this.units = unitList;
     }
 
-    public int getCost() {
-        //TODO
-        return this.player.getMinimumMoveSize(source, aim) * numUnits;
+    public int calculateFoodCost() {
+        return this.player.getMinimumMoveSize(source, aim) * sumUnits();
     }
 
     /**
@@ -40,30 +32,20 @@ public class MoveActionOrder extends ActionOrder {
      * @Date: 2020/4/13
      */
     private void promptFail() {
-        throw new IllegalArgumentException("Move order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + numUnits + " / available units: " + source.getTerritoryUnits());
+        throw new IllegalArgumentException("Move order creation failed: not enough units.\nPlayer: " + player.getPlayerName() + "; sourceTerritory: " + source.getTerritoryName() + "; aimTerritory: " + aim.getTerritoryName() + "; demand units: " + sumUnits() + " / available units: " + source.getTerritoryUnits());
     }
 
     /**
-    * @Description: This function runOrder is to execute the move order.
+    * @Description: This function execute is to execute the move order.
     * @Param: []
     * @return: void
     * @Author: Leo
     * @Date: 2020/4/13
     */
-    private void runOrder() {
-        this.aim.increaseUnits(this.numUnits);
-    }
-
-    /**
-     * @Description: This function execute is to execute the order with some checks to ensure it executable.
-     * @Param: []
-     * @return: void
-     * @Author: Leo
-     * @Date: 2020/4/13
-     */
-    @Override
     public void execute() {
-        runOrder();
+        //EVO2
+        this.player.consumeFoodResource(calculateFoodCost());
+        this.aim.increaseUnits(this.units);
     }
 
     /**
@@ -75,9 +57,9 @@ public class MoveActionOrder extends ActionOrder {
      */
     @Override
     public boolean checkLegal() {
-        return this.numUnits >= 0 &&
-               this.numUnits <= source.getTerritoryUnits() &&
-               player.checkReachable(source, aim);
+        return player.getMinimumMoveSize(this.source, this.aim) != -1 &&
+               player.getFoodResources() >= this.calculateFoodCost() &&
+               source.hasEnoughUnits(this.units);
     }
 
     /**
@@ -88,9 +70,16 @@ public class MoveActionOrder extends ActionOrder {
      * @Date: 2020/4/13
      */
     public static MoveActionOrder deserialize(JSONObject moveObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
+        ArrayList<Integer> unitList = new ArrayList<>();
+        moveObject.getJSONArray("unitList").forEach(e -> unitList.add((Integer)e));
+
+        if (unitList.size() != 7) {
+            throw new IllegalArgumentException("The unit size is not correct!");
+        }
+
         return new MoveActionOrder(playerMap.get(moveObject.getString("player")),
                 territoryMap.get(moveObject.getString("source")),
                 territoryMap.get(moveObject.getString("aim")),
-                moveObject.getInt("num"));
+                unitList);
     }
 }

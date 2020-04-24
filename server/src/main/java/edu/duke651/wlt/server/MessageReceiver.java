@@ -22,29 +22,30 @@ public class MessageReceiver {
     * @Author: Will
     * @Date: 2020/4/13
     */
-    public ArrayList<ActionOrder> receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap, String requiredType) throws IOException, JSONException, IllegalArgumentException {
+    public void receiveNewTurn(LinkInfo linkInfo, Map<String, Player> playerMap, Map<String, Territory> territoryMap,
+                                                 ArrayList<ActionOrder> attackOrders, ArrayList<ActionOrder> moveOrders, ArrayList<UpgradeUnitOrder> upgradeUnitOrders, ArrayList<UpgradeTechOrder> upgradeTechOrders) throws IOException, JSONException, IllegalArgumentException {
         JSONObject turnObject = new JSONObject(linkInfo.readMessage());
         if (!turnObject.getString("status").equals("success")) {
             throw new IllegalArgumentException("Network error with player " + linkInfo.getPlayerName());
         }
 
-        ArrayList<ActionOrder> actionOrderList = new ArrayList<>();
         turnObject.getJSONArray("data").forEach(element -> {
-            if (!((JSONObject)element).getString("player").equals(linkInfo.getPlayerName()) ||
-                !((JSONObject)element).getString("type").equals(requiredType)) {
+            if (!((JSONObject)element).getString("player").equals(linkInfo.getPlayerName())) {
                 throw new IllegalArgumentException("Wrong order type with player " + linkInfo.getPlayerName());
             }
 
             if (((JSONObject)element).getString("type").equals("move")) {
-                actionOrderList.add(MoveActionOrder.deserialize((JSONObject)element, playerMap, territoryMap));
+                moveOrders.add(MoveActionOrder.deserialize((JSONObject)element, playerMap, territoryMap));
             } else if (((JSONObject)element).getString("type").equals("attack")) {
-                actionOrderList.add(AttackActionOrder.deserialize((JSONObject)element, playerMap, territoryMap));
+                attackOrders.add(AttackActionOrder.deserialize((JSONObject)element, playerMap, territoryMap));
+            } else if (((JSONObject)element).getString("type").equals("upgradeTech")) {
+                upgradeTechOrders.add(UpgradeTechOrder.deserialize((JSONObject)element, playerMap));
+            } else if (((JSONObject)element).getString("type").equals("upgradeUnits")) {
+                upgradeUnitOrders.add(UpgradeUnitOrder.deserialize((JSONObject)element, playerMap, territoryMap));
             } else {
                 throw new IllegalArgumentException("Wrong order type with player " + linkInfo.getPlayerName());
             }
         });
-
-        return actionOrderList;
     }
 
     /**
@@ -67,7 +68,7 @@ public class MessageReceiver {
             if (!territoryMap.containsKey(((JSONObject)element).getString("name"))) {
                 throw new IllegalArgumentException("Wrong selection with player " + player.getPlayerName());
             }
-            territoryMap.get(((JSONObject)element).getString("name")).setTerritoryUnits(((JSONObject)element).getInt("units"));
+            //territoryMap.get(((JSONObject)element).getString("name")).setTerritoryUnits(((JSONObject)element).getInt("units"));
             player.addTerritory(territoryMap.get(((JSONObject)element).getString("name")));
             territoryMap.remove(((JSONObject)element).getString("name"));
         });

@@ -1,5 +1,6 @@
 package edu.duke651.wlt.models;
 
+import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,8 +17,10 @@ public class Player {
     //fields:
     private String playerName;
     private HashMap<String, Territory> territories = new HashMap<>();
-    private int resources = 0;
+    private int techResources = 0;
+    private int foodResources = 0;
     private int techLevel = 1;
+    private String colorOnMap;
 
     //constructors
     public Player(String playerName) {
@@ -50,8 +53,8 @@ public class Player {
         return territories;
     }
 
-    public int getResources() {
-        return resources;
+    public int getTechResources() {
+        return techResources;
     }
 
     public int getTechLevel() {
@@ -62,28 +65,84 @@ public class Player {
         this.techLevel = techLevel;
     }
 
-    public int getMinimumMoveSize (Territory source, Territory aim) {
-        //TODO
-//        Deque<Territory> shortestPath = getShortestPath(source, aim);
-//        int minimumSize = 0;
-//        while (!shortestPath.isEmpty()) {
-//            Territory territory = shortestPath.pollFirst();
-//            minimumSize += territory.getSize();
-//        }
-        return 0;
+    public int getFoodResources() {
+        return foodResources;
+    }
+
+    public void setFoodResources(int foodResources) {
+        this.foodResources = foodResources;
+    }
+
+    public int getMinimumMoveSize(Territory source, Territory aim) {
+        if (source.getTerritoryOwner() != this || aim.getTerritoryOwner() != this)
+            return -1;
+        //BFS to search the destination
+        Queue<Pair<Territory, Integer>> territoryQueue = new LinkedList<>();
+        Map<Territory, Integer> visitedTerritory = new HashMap<>();
+        territoryQueue.add(new Pair<>(source, source.getSize()));
+        visitedTerritory.put(source, source.getSize());
+
+        while (!territoryQueue.isEmpty()) {
+            Pair<Territory, Integer> curr = territoryQueue.poll();
+
+            for (Territory territory : curr.getKey().getTerritoryNeighbors().values()) {
+                if (territory.getTerritoryOwner() == this &&
+                    (!visitedTerritory.containsKey(territory) || visitedTerritory.get(territory) > curr.getValue() + territory.getSize())) {
+                    visitedTerritory.put(territory, curr.getValue() + territory.getSize());
+                    territoryQueue.add(new Pair<>(territory, curr.getValue() + territory.getSize()));
+                }
+            }
+        }
+
+        return visitedTerritory.getOrDefault(aim, -1);
     }
 
     /**
-    * @Description: This function collectResource is for a player to collect his resource from his territories.
+    * @Description: This function collectResource is for a player to collect his tech resource from his territories.
     * @Param: []
     * @return: void
     * @Author: Leo
     * @Date: 2020/4/20
     */
-    public void collectResource() {
-        for (Territory territory : territories.values()) {
-            this.resources += territory.getResourceGenerate();
+    public void collectTechResource() {
+        for (Territory territory : this.territories.values()) {
+            this.techResources += territory.getTechResourceGenerate();
         }
+    }
+
+    /**
+    * @Description: This function collectFoodResource is to collect food resource from all territories.
+    * @Param: []
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void collectFoodResource() {
+        for (Territory territory : this.territories.values()) {
+            this.foodResources += territory.getFoodResourceGenerate();
+        }
+    }
+
+    /**
+    * @Description: This function reduceFoodResource is to consume food resource.
+    * @Param: [consume]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void consumeFoodResource(int consume) {
+        this.foodResources -= consume;
+    }
+
+    /**
+    * @Description: This function reduceTechResource is to consume tech resource.
+    * @Param: [consume]
+    * @return: void
+    * @Author: Leo
+    * @Date: 2020/4/24
+    */
+    public void consumeTechResource(int consume) {
+        this.techResources -= consume;
     }
 
     /**
@@ -163,12 +222,15 @@ public class Player {
     public JSONObject serialize() {
         JSONObject playerObject = new JSONObject();
         playerObject.put("playerName", this.playerName);
+        playerObject.put("food", this.foodResources);
+        playerObject.put("tech", this.techResources);
+        playerObject.put("techLevel", this.techLevel);
+        playerObject.put("color", this.colorOnMap);
 
         JSONArray territoryList = new JSONArray();
         this.territories.forEach((name, territory) -> {
             JSONObject territoryObject = new JSONObject();
             territoryObject.put("name", name);
-            territoryObject.put("units", territory.getTerritoryUnits());
             territoryList.put(territoryObject);
         });
         playerObject.put("territories", territoryList);
@@ -185,16 +247,19 @@ public class Player {
     */
     public static Player deserialize(JSONObject playerObject, Map<String, Territory> territoryMap) throws JSONException {
         Player player = new Player(playerObject.getString("playerName"));
+        player.foodResources = playerObject.getInt("food");
+        player.techResources = playerObject.getInt("tech");
+        player.techLevel = playerObject.getInt("techLevel");
+        player.colorOnMap = playerObject.getString("color");
+
         playerObject.getJSONArray("territories").forEach(element -> {
             String territoryName = ((JSONObject)element).getString("name");
-            int territoryUnit = ((JSONObject)element).getInt("units");
 
             if (!territoryMap.containsKey(territoryName)) {
                 throw new IllegalArgumentException("territory " + territoryName + " does not exist!");
             }
             player.addTerritory(territoryMap.get(territoryName));
             territoryMap.get(territoryName).setTerritoryOwner(player);
-            territoryMap.get(territoryName).setTerritoryUnits(territoryUnit);
         });
 
         return player;

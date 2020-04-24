@@ -106,12 +106,13 @@ public class GameController {
         Set<Player> illegalPlayerSet = new HashSet<>();
         ArrayList<ActionOrder> moveActionOrders = new ArrayList<>();
         ArrayList<ActionOrder> attackActionOrders = new ArrayList<>();
+        ArrayList<UpgradeUnitOrder> upgradeUnitsOrders = new ArrayList<>();
+        ArrayList<UpgradeTechOrder> upgradeTechOrders = new ArrayList<>();
         ArrayList<ActionOrder> allActionOrders = new ArrayList<>();
         for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
             if (players.containsKey(linkInfo.getPlayerName())) {
                 try {
-                    moveActionOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "move"));
-                    attackActionOrders.addAll(messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, "attack"));
+                    messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, attackActionOrders, moveActionOrders, upgradeUnitsOrders, upgradeTechOrders);
                 } catch (IllegalArgumentException e) {
                     System.out.println("Error order with player " + linkInfo.getPlayerName());
                     illegalPlayerSet.add(players.get(linkInfo.getPlayerName()));
@@ -123,21 +124,56 @@ public class GameController {
         allActionOrders.addAll(moveActionOrders);
         allActionOrders.addAll(attackActionOrders);
 
-        System.out.println("check orders...");
+        System.out.println("check upgrade orders...");
+        //check upgrade
+        for (Player player : players.values()) {
+            if (illegalPlayerSet.contains(player)) continue;
+            int needTech = 0;
+            for (UpgradeTechOrder upgradeTechOrder : upgradeTechOrders) {
+                if (upgradeTechOrder.getPlayer() == player) {
+                    if (upgradeTechOrder.checkLegal()) {
+                        needTech += upgradeTechOrder.getTechCost();
+                    } else {
+                        illegalPlayerSet.add(player);
+                    }
+                }
+            }
+            for (UpgradeUnitOrder upgradeUnitOrder : upgradeUnitsOrders) {
+                if (upgradeUnitOrder.getPlayer() == player) {
+                    if (upgradeUnitOrder.checkLegal()) {
+                        needTech += upgradeUnitOrder.getTechCost();
+                    } else {
+                        illegalPlayerSet.add(player);
+                    }
+                }
+            }
+            if (needTech > player.getTechResources()) {
+                illegalPlayerSet.add(player);
+            }
+        }
+
+        System.out.println("do upgrading...");
+        //execute upgrade units orders
+        upgradeUnitsOrders.forEach(UpgradeUnitOrder::execute);
+
+        System.out.println("check action orders...");
         //check if the orders are legal
         for (Territory territory : territoryMap.values()) {
             if (illegalPlayerSet.contains(territory.getTerritoryOwner())) continue;
-            int numCount = 0;
+            ArrayList<Integer> needUnits = new ArrayList<>(Collections.nCopies(7, 0));
             for (ActionOrder actionOrder : allActionOrders) {
-                if (territory == actionOrder.getSource()) {
-                    numCount += actionOrder.getNumUnits();
-                }
                 if (!actionOrder.checkLegal()) {
                     illegalPlayerSet.add(territory.getTerritoryOwner());
                     break;
                 }
+                if (territory == actionOrder.getSource()) {
+                    ArrayList<Integer> units = actionOrder.getUnits();
+                    for (int i = 0; i < needUnits.size(); i++) {
+                        needUnits.set(i, needUnits.get(i) + units.get(i));
+                    }
+                }
             }
-            if (numCount > territory.getTerritoryUnits()) {
+            if (!territory.hasEnoughUnits(needUnits)) {
                 System.out.println("Illegal sum");
                 illegalPlayerSet.add(territory.getTerritoryOwner());
             }
@@ -166,9 +202,20 @@ public class GameController {
                 actionOrder.execute();
             }
         }
+
+        System.out.println("upgrade tech...");
+        //carry out upgrade tech last
+        upgradeTechOrders.forEach(UpgradeTechOrder::execute);
+
+        System.out.println("refresh resources...");
+        //refresh resources
         incrementTerritoryUnit();
         //This is for EVO2
         incrementResource();
+
+        System.out.println("Illegal players: ");
+        illegalPlayerSet.forEach(System.out::println);
+        System.out.println("Finish this round!");
     }
 
     /**
@@ -185,7 +232,7 @@ public class GameController {
     }
 
     /**
-    * @Description: This function incrementResource is to increment players' resource.
+    * @Description: This function incrementResource is to increment players' tech and food resource.
     * @Param: []
     * @return: void
     * @Author: Leo
@@ -193,7 +240,8 @@ public class GameController {
     */
     private void incrementResource() {
         for (Player player : players.values()) {
-            player.collectResource();
+            player.collectTechResource();
+            player.collectFoodResource();
         }
     }
 
@@ -248,7 +296,22 @@ public class GameController {
 
             //assign units
             for (int i = 0; i < ServerSetting.INIT_UNITS; i++) {
-                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseUnits(1);
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).incrementUnits();
+            }
+
+            //assign size
+            for (int i = 0; i < ServerSetting.INIT_SIZE - ServerSetting.INIT_SIZE_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseSize(1);
+            }
+
+            //assign techResourceGenerate
+            for (int i = 0; i < ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL - ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseTechResourceGenerateLevel(1);
+            }
+
+            //assign foodResourceGenerate
+            for (int i = 0; i < ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL - ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE * territoryArrayList.size(); i++) {
+                territoryArrayList.get(random.nextInt(territoryArrayList.size())).increaseFoodResourceGenerateLevel(1);
             }
         }
     }
