@@ -16,7 +16,6 @@ public class Territory {
     //fields:
     private String territoryName;
     private Player territoryOwner;
-    private int territoryUnits;
     private Map<String, Territory> territoryNeighbors = new HashMap<>();
     private int techResourceGenerate = ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE;
     private int foodResourceGenerate = ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE;
@@ -33,7 +32,6 @@ public class Territory {
     */
     public Territory(String territoryName) {
         this.territoryName = territoryName;
-        this.territoryUnits = 0;
     }
 
     /**
@@ -45,7 +43,6 @@ public class Territory {
     */
     public Territory(String name, Map<String, Territory> neighbors) {
         this.territoryName = name;
-        this.territoryUnits = 0;
         this.territoryNeighbors = neighbors;
     }
 
@@ -79,15 +76,13 @@ public class Territory {
         this.size = size;
     }
 
-    public void increaseUnits(int num, ArrayList<Integer> unitsArray) {
-        this.territoryUnits += num;
+    public void increaseUnits(ArrayList<Integer> unitsArray) {
         for (int i = 0; i < this.territoryUnitsInLevel.size(); ++i) {
             this.territoryUnitsInLevel.set(i, this.territoryUnitsInLevel.get(i) + unitsArray.get(i));
         }
     }
 
-    public void reduceUnits(int num, ArrayList<Integer> unitsArray) {
-        this.territoryUnits -= num;
+    public void reduceUnits(ArrayList<Integer> unitsArray) {
         for (int i = 0; i < this.territoryUnitsInLevel.size(); ++i) {
             this.territoryUnitsInLevel.set(i, this.territoryUnitsInLevel.get(i) - unitsArray.get(i));
         }
@@ -95,7 +90,6 @@ public class Territory {
 
     public void incrementUnits() {
         this.territoryUnitsInLevel.set(0, this.territoryUnitsInLevel.get(0) + 1);
-        ++this.territoryUnits;
     }
 
     public String getTerritoryName() {
@@ -123,15 +117,15 @@ public class Territory {
     }
 
     public int getTerritoryUnits() {
-        return territoryUnits;
+        int sum = 0;
+        for (Integer integer : this.territoryUnitsInLevel) {
+            sum += integer;
+        }
+        return sum;
     }
 
     public void setTerritoryOwner(Player territoryOwner) {
         this.territoryOwner = territoryOwner;
-    }
-
-    public void setTerritoryUnits(int territoryUnits) {
-        this.territoryUnits = territoryUnits;
     }
 
     public int getTechResourceGenerate() {
@@ -182,6 +176,19 @@ public class Territory {
         this.size += size;
     }
 
+    public boolean hasEnoughUnits(ArrayList<Integer> unitList) {
+        if (unitList.size() != this.territoryUnitsInLevel.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < this.territoryUnitsInLevel.size(); i++) {
+            if (unitList.get(i) > this.territoryUnitsInLevel.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * @Description: This function serialize is to serialize the player in order to send over network.
      * @Param: []
@@ -192,10 +199,12 @@ public class Territory {
     public JSONObject serialize() {
         JSONObject territoryItem = new JSONObject();
         territoryItem.put("name", this.territoryName);
-        territoryItem.put("units", this.territoryUnits);
         JSONArray neighbourList = new JSONArray();
         this.territoryNeighbors.keySet().forEach(neighbourList::put);
         territoryItem.put("neighbours", neighbourList);
+        JSONArray unitList = new JSONArray();
+        this.territoryUnitsInLevel.forEach(unitList::put);
+        territoryItem.put("unitList", unitList);
 
         return territoryItem;
     }
@@ -209,7 +218,10 @@ public class Territory {
      */
     public static Territory deserialize(JSONObject territoryObject) throws JSONException {
         Territory territory = new Territory(territoryObject.getString("name"));
-        territory.setTerritoryUnits(territoryObject.getInt("units"));
+        JSONArray unitArray = territoryObject.getJSONArray("unitList");
+        for (int i = 0; i < 7; i++) {
+            territory.territoryUnitsInLevel.set(i, unitArray.getInt(i));
+        }
 
         return territory;
     }

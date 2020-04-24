@@ -40,6 +40,7 @@ public class ServerSetting {
     * @Date: 2020/4/21
     */
     public static final Map<Integer, Integer> TECH_LEVEL_COST_MAP = new HashMap<>() {{
+        put(1, 0);
         put(2, 50);
         put(3, 75);
         put(4, 125);

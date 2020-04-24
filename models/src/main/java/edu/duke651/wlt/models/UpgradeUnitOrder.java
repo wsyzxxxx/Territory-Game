@@ -1,6 +1,10 @@
 package edu.duke651.wlt.models;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @program: wlt-risc
@@ -8,9 +12,8 @@ import java.util.ArrayList;
  * @author: Leo
  * @create: 2020-04-20 12:08
  **/
-public class UpdateUnitOrder extends Order{
+public class UpgradeUnitOrder extends Order{
     private Territory source;
-    private int techCost;
     private ArrayList<Integer> unitsAfterUpdate;
 
     /**
@@ -20,10 +23,11 @@ public class UpdateUnitOrder extends Order{
     * @Author: Leo
     * @Date: 2020/4/21
     */
-    public UpdateUnitOrder(Territory source, ArrayList<Integer> unitsAfterUpdate) {
+    public UpgradeUnitOrder(Territory source, ArrayList<Integer> unitsAfterUpdate) {
+        this.player = source.getTerritoryOwner();
+        this.type = "upgradeUnits";
         this.unitsAfterUpdate = unitsAfterUpdate;
         this.source = source;
-        this.techCost = calculateTechCost();
     }
 
     /**
@@ -33,7 +37,7 @@ public class UpdateUnitOrder extends Order{
     * @Author: Leo
     * @Date: 2020/4/21
     */
-    private int calculateTechCost() {
+    public int calculateTechCost() {
         ArrayList<Integer> unitsBeforeUpdate = this.source.getTerritoryUnitsInLevel();
         int afterCost = 0;
         int beforeCost = 0;
@@ -59,7 +63,7 @@ public class UpdateUnitOrder extends Order{
     }
 
     public int getTechCost() {
-        return techCost;
+        return calculateTechCost();
     }
 
     public Territory getSource() {
@@ -70,14 +74,47 @@ public class UpdateUnitOrder extends Order{
         return unitsAfterUpdate;
     }
 
+    private int sumUnits() {
+        int sum = 0;
+        for (Integer integer : this.unitsAfterUpdate) {
+            sum += integer;
+        }
+        return sum;
+    }
+
     @Override
     public void execute() {
-        this.player.consumeTechResource(techCost);
+        this.player.consumeTechResource(calculateTechCost());
         this.source.setTerritoryUnitsInLevel(this.unitsAfterUpdate);
     }
 
     @Override
     public boolean checkLegal() {
-        return this.player.getTechResources() >= techCost && getRequireLevel() <= this.player.getTechLevel();
+        return this.player.getTechResources() >= calculateTechCost() &&
+               getRequireLevel() <= this.player.getTechLevel() &&
+               calculateTechCost() >= 0 &&
+               this.sumUnits() == source.getTerritoryUnits();
+    }
+
+    @Override
+    public JSONObject serialize() {
+        JSONObject orderObject = new JSONObject();
+        orderObject.put("type", this.type);
+        orderObject.put("player", this.player.getPlayerName());
+        orderObject.put("source", this.source.getTerritoryName());
+        JSONArray unitsLevelArray = new JSONArray();
+        unitsAfterUpdate.forEach(unitsLevelArray::put);
+        orderObject.put("units", unitsAfterUpdate);
+
+        return orderObject;
+    }
+
+    public static UpgradeUnitOrder deserialize(JSONObject upgradeTechObject, Map<String, Player> playerMap, Map<String, Territory> territoryMap) {
+        ArrayList<Integer> unitsAfterUpdate = new ArrayList<>();
+        upgradeTechObject.getJSONArray("units").forEach(e -> unitsAfterUpdate.add((Integer)e));
+        if (unitsAfterUpdate.size() != 7 || territoryMap.get(upgradeTechObject.getString("source")).getTerritoryOwner() != playerMap.get(upgradeTechObject.getString("player"))) {
+            throw new IllegalArgumentException("It's not your territory!");
+        }
+        return new UpgradeUnitOrder(territoryMap.get(upgradeTechObject.getString("source")), unitsAfterUpdate);
     }
 }

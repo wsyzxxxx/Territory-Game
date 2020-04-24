@@ -21,8 +21,8 @@ public abstract class Order {
     public Player getPlayer() {
         return this.player;
     }
-
     public String getType() {
         return type;
     }
+    public abstract JSONObject serialize();
 }
