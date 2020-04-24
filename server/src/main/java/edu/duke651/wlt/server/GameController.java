@@ -114,7 +114,7 @@ public class GameController {
                 try {
                     messageReceiver.receiveNewTurn(linkInfo, players, territoryMap, attackActionOrders, moveActionOrders, upgradeUnitsOrders, upgradeTechOrders);
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Error order with player " + linkInfo.getPlayerName());
+                    System.out.println("Error order with player " + linkInfo.getPlayerName() + e.getMessage());
                     illegalPlayerSet.add(players.get(linkInfo.getPlayerName()));
                 } catch (Exception e) {
                     System.out.println("Network error with player " + linkInfo.getPlayerName());
@@ -214,7 +214,7 @@ public class GameController {
         incrementResource();
 
         System.out.println("Illegal players: ");
-        illegalPlayerSet.forEach(System.out::println);
+        illegalPlayerSet.forEach(e -> System.out.println(e.getPlayerName()));
         System.out.println("Finish this round!");
     }
 

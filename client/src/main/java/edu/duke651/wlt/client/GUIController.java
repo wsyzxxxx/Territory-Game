@@ -96,6 +96,7 @@ public class GUIController {
         moveActionOrders.clear();
         upgradeTechOrders.clear();
         upgradeTechOrders.clear();
+        vBox.getChildren().clear();
 
         try {
             steps.setText("Waiting for other players...");
@@ -380,7 +381,7 @@ public class GUIController {
             @Override
             public void handle(ActionEvent actionEvent) {
                 ArrayList<Integer> unitList = new ArrayList<>();
-                textFields.forEach(textField -> levels.add(Integer.valueOf(textField.getText().trim())));
+                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
                 upgradeUnitOrders.add(new UpgradeUnitOrder(territory, unitList));
                 vBox.getChildren().add(new Text("Upgrade: in " + territory.getTerritoryName()));
                 menuStage.close();

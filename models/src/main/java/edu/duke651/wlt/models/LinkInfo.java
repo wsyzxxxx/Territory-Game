@@ -59,7 +59,7 @@ public class LinkInfo {
         this.bufferedWriter.write(message);
         this.bufferedWriter.newLine();
         this.bufferedWriter.flush();
-        //System.out.println("Send message! " + message);
+        System.out.println("Send message! " + message);
     }
 
     public boolean isAlive() {
