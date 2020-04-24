@@ -44,8 +44,9 @@ public class LinkInfo {
      * @Date: 2020/4/13
      */
     public String readMessage() throws IOException {
-        //System.out.println("receive message! " + res);
-        return this.bufferedReader.readLine();
+        String res = this.bufferedReader.readLine();
+        System.out.println("receive message! " + res);
+        return res;
     }
 
     /**
