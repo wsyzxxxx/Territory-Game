@@ -1,7 +1,6 @@
 package edu.duke651.wlt.models;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @program: wlt-risc
@@ -11,7 +10,7 @@ import java.util.Arrays;
  **/
 public class UpdateUnitOrder extends Order{
     private Territory source;
-    private int cost;
+    private int techCost;
     private ArrayList<Integer> unitsAfterUpdate;
 
     /**
@@ -24,7 +23,7 @@ public class UpdateUnitOrder extends Order{
     public UpdateUnitOrder(Territory source, ArrayList<Integer> unitsAfterUpdate) {
         this.unitsAfterUpdate = unitsAfterUpdate;
         this.source = source;
-        this.cost = getCost();
+        this.techCost = calculateTechCost();
     }
 
     /**
@@ -34,7 +33,7 @@ public class UpdateUnitOrder extends Order{
     * @Author: Leo
     * @Date: 2020/4/21
     */
-    private int getCost() {
+    private int calculateTechCost() {
         ArrayList<Integer> unitsBeforeUpdate = this.source.getTerritoryUnitsInLevel();
         int afterCost = 0;
         int beforeCost = 0;
@@ -59,13 +58,26 @@ public class UpdateUnitOrder extends Order{
         return 0;
     }
 
+    public int getTechCost() {
+        return techCost;
+    }
+
+    public Territory getSource() {
+        return source;
+    }
+
+    public ArrayList<Integer> getUnitsAfterUpdate() {
+        return unitsAfterUpdate;
+    }
+
     @Override
     public void execute() {
+        this.player.consumeTechResource(techCost);
         this.source.setTerritoryUnitsInLevel(this.unitsAfterUpdate);
     }
 
     @Override
     public boolean checkLegal() {
-        return this.player.getResources() >= cost && getRequireLevel() <= this.player.getTechLevel();
+        return this.player.getTechResources() >= techCost && getRequireLevel() <= this.player.getTechLevel();
     }
 }

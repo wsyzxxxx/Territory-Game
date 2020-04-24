@@ -2,6 +2,7 @@ package edu.duke651.wlt.models;
 
 import org.checkerframework.checker.units.qual.UnitsBottom;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +18,17 @@ public class ServerSetting {
     public static final int PORT = 8888;
     public static final int PLAYER_NUM = 2;
     public static final int INIT_UNITS = 15;
-    public static final Map<Integer, String> PLAYER_TERRITORY_GROUP_MAP = new HashMap<Integer, String>() {{
-       put(2, "[[\"Narnia\", \"Midkemia\", \"Oz\", \"Gondor\", \"Mordor\"], [\"Elantris\", \"Scadrial\", \"Roshar\", \"Hogwarts\"]]");
-       put(3, "[[\"Narnia\", \"Midkemia\", \"Oz\"], [\"Gondor\", \"Mordor\", \"Hogwarts\"], [\"Elantris\", \"Scadrial\", \"Roshar\"]]");
-       put(4, "[[\"Narnia\", \"Elantris\"], [\"Midkemia\", \"Oz\", \"Scadrial\"], [\"Gondor\", \"Mordor\"], [\"Hogwarts\", \"Roshar\"]]");
-       put(5, "[[\"Narnia\", \"Midkemia\"], [\"Oz\", \"Gondor\"], [\"Mordor\", \"Hogwarts\"], [\"Elantris\"], [\"Scadrial\", \"Roshar\"]]");
+    public static final int INIT_SIZE_BASE = 5;
+    public static final int INIT_SIZE = 50;
+    public static final int INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE = 5;
+    public static final int INIT_TECH_RESOURCE_GENERATE_LEVEL = 60;
+    public static final int INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE = 5;
+    public static final int INIT_FOOD_RESOURCE_GENERATE_LEVEL = 60;
+    public static final Map<Integer, String> PLAYER_TERRITORY_GROUP_MAP = new HashMap<>() {{
+        put(2, "[[\"Narnia\", \"Midkemia\", \"Oz\", \"Gondor\", \"Mordor\"], [\"Elantris\", \"Scadrial\", \"Roshar\", \"Hogwarts\"]]");
+        put(3, "[[\"Narnia\", \"Midkemia\", \"Oz\"], [\"Gondor\", \"Mordor\", \"Hogwarts\"], [\"Elantris\", \"Scadrial\", \"Roshar\"]]");
+        put(4, "[[\"Narnia\", \"Elantris\"], [\"Midkemia\", \"Oz\", \"Scadrial\"], [\"Gondor\", \"Mordor\"], [\"Hogwarts\", \"Roshar\"]]");
+        put(5, "[[\"Narnia\", \"Midkemia\"], [\"Oz\", \"Gondor\"], [\"Mordor\", \"Hogwarts\"], [\"Elantris\"], [\"Scadrial\", \"Roshar\"]]");
     }};
 
     //Below is added for EVO2
@@ -32,7 +39,7 @@ public class ServerSetting {
     * @Author: Leo
     * @Date: 2020/4/21
     */
-    public static final Map<Integer, Integer> TECH_LEVEL_COST_MAP = new HashMap<Integer, Integer>() {{
+    public static final Map<Integer, Integer> TECH_LEVEL_COST_MAP = new HashMap<>() {{
         put(2, 50);
         put(3, 75);
         put(4, 125);
@@ -47,8 +54,8 @@ public class ServerSetting {
     * @Author: Leo
     * @Date: 2020/4/21
     */
-    public static final Map<Integer, UnitInfo> UNIT_LEVEL_COST_MAP = new HashMap<Integer, UnitInfo>() {{
-       put(0, new UnitInfo(0, "Peasant", 0, 0));
+    public static final Map<Integer, UnitInfo> UNIT_LEVEL_COST_MAP = new HashMap<>() {{
+        put(0, new UnitInfo(0, "Peasant", 0, 0));
         put(1, new UnitInfo(1, "Archer", 1, 3));
         put(2, new UnitInfo(2, "Swordsman", 3, 11));
         put(3, new UnitInfo(3, "Crusader", 5, 30));
