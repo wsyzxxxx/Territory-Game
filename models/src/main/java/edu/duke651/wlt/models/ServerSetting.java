@@ -10,8 +10,8 @@ import java.util.Map;
  * @create: 2020-04-09 11:55
  **/
 public class ServerSetting {
-    //public static final String HOST = "willxxx.xin";
-    public static final String HOST = "localhost";
+    public static final String HOST = "willxxx.xin";
+    //public static final String HOST = "localhost";
     public static final int PORT = 8888;
     public static final int PLAYER_NUM = 2;
     public static final int INIT_UNITS = 15;

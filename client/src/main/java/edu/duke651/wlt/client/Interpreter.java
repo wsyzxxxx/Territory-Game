@@ -122,6 +122,7 @@ public class Interpreter {
                 printer.printLargerUnits();
                 throw new IllegalArgumentException();
             } else {
+                player.getTerritories().get(source).reduceUnits(output);
                 return output;
             }
         } catch (NumberFormatException e) {
