@@ -112,6 +112,11 @@ public class AttackActionOrder extends ActionOrder {
                 isAttackTurn = true;
             }
         }
+
+        //EVO3
+        if (source.isPlagueMode()) {
+            Plague.propagateToOneTerritory(aim);
+        }
     }
 
     /**
