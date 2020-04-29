@@ -48,9 +48,7 @@ public class MoveActionOrder extends ActionOrder {
         this.aim.increaseUnits(this.units);
 
         //EVO3
-        if (source.isPlagueMode()) {
-            Plague.actionOrderPropagate(aim);
-        }
+        Plague.actionOrderPropagate(source, aim);
     }
 
     /**

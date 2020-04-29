@@ -114,9 +114,7 @@ public class AttackActionOrder extends ActionOrder {
         }
 
         //EVO3
-        if (source.isPlagueMode()) {
-            Plague.actionOrderPropagate(aim);
-        }
+        Plague.actionOrderPropagate(source, aim);
     }
 
     /**
