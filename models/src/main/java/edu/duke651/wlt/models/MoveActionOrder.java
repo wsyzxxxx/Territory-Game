@@ -46,6 +46,11 @@ public class MoveActionOrder extends ActionOrder {
         //EVO2
         this.player.consumeFoodResource(calculateFoodCost());
         this.aim.increaseUnits(this.units);
+
+        //EVO3
+        if (source.isPlagueMode()) {
+            Plague.actionOrderPropagate(aim);
+        }
     }
 
     /**

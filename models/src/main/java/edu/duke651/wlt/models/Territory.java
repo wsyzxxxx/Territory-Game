@@ -20,8 +20,13 @@ public class Territory {
     private int techResourceGenerate = ServerSetting.INIT_TECH_RESOURCE_GENERATE_LEVEL_BASE;
     private int foodResourceGenerate = ServerSetting.INIT_FOOD_RESOURCE_GENERATE_LEVEL_BASE;
     private int size = ServerSetting.INIT_SIZE_BASE;
+
     //This is an array of numbers of different level of units. [0] is number of units of level 0.
     private ArrayList<Integer> territoryUnitsInLevel = new ArrayList<>(Collections.nCopies(7, 0));
+
+    //This is for EVO3: Plague
+    private boolean plagueMode = false;
+    private boolean quarantineMode = false;
 
     /**
     * @Description: This is the constructor with only territory name.
@@ -47,6 +52,34 @@ public class Territory {
     }
 
     //methods:
+
+    public boolean isQuarantineMode() {
+        return quarantineMode;
+    }
+
+    public void setQuarantineMode(boolean quarantineMode) {
+        this.quarantineMode = quarantineMode;
+    }
+
+    public void randomKillUnits(int unitsToKill) {
+        int unitsKilled = 0;
+        Random r = new Random();
+        while (unitsKilled < unitsToKill) {
+            int index = r.nextInt(7);
+            if (getTerritoryUnitsInLevel().get(index) > 0) {
+                this.territoryUnitsInLevel.set(index, this.territoryUnitsInLevel.get(index) - 1);
+                unitsKilled++;
+            }
+        }
+    }
+
+    public boolean isPlagueMode() {
+        return plagueMode;
+    }
+
+    public void setPlagueMode(boolean plagueMode) {
+        this.plagueMode = plagueMode;
+    }
 
     public void setTechResourceGenerate(int techResourceGenerate) {
         this.techResourceGenerate = techResourceGenerate;
