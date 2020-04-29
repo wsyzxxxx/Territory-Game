@@ -109,6 +109,10 @@ public class GameController {
         ArrayList<UpgradeUnitOrder> upgradeUnitsOrders = new ArrayList<>();
         ArrayList<UpgradeTechOrder> upgradeTechOrders = new ArrayList<>();
         ArrayList<ActionOrder> allActionOrders = new ArrayList<>();
+        //EVO3
+        ArrayList<PurifyOrder> purifyOrders = new ArrayList<>();
+        ArrayList<QuarantineOrder> quarantineOrders = new ArrayList<>();
+
         for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
             if (players.containsKey(linkInfo.getPlayerName())) {
                 try {
