@@ -1,6 +1,9 @@
 package edu.duke651.wlt.models;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * @program: wlt-risc
@@ -27,12 +30,12 @@ public class QuarantineOrder extends Order {
 
     @Override
     public void execute() {
-
+        source.setQuarantineMode(true);
     }
 
     @Override
     public boolean checkLegal() {
-        return false;
+        return true;
     }
 
     @Override
@@ -47,6 +50,15 @@ public class QuarantineOrder extends Order {
 
     @Override
     public JSONObject serialize() {
-        return null;
+        JSONObject orderObject = new JSONObject();
+        orderObject.put("type", this.type);
+        orderObject.put("player", this.player.getPlayerName());
+        orderObject.put("source", this.source.getTerritoryName());
+
+        return orderObject;
+    }
+
+    public static QuarantineOrder deserialize(JSONObject quarantineOrderObject, Map<String, Territory> territoryMap) {
+        return new QuarantineOrder(territoryMap.get(quarantineOrderObject.getString("source")));
     }
 }

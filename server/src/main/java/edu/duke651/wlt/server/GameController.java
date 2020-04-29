@@ -123,6 +123,12 @@ public class GameController {
         }
         allActionOrders.addAll(moveActionOrders);
         allActionOrders.addAll(attackActionOrders);
+        //EVO3: Purify orders and Quarantine orders
+        //TODO
+
+        //EVO3: Purify order first
+
+        //EVO3: Quarantine order second
 
         System.out.println("check upgrade orders...");
         //check upgrade
@@ -212,6 +218,18 @@ public class GameController {
         incrementTerritoryUnit();
         //This is for EVO2
         incrementResource();
+
+        //EVO3: natural plague behaviors
+        for (Territory territory : territoryMap.values()) {
+            //burst
+            Plague.burst(territory);
+            //natural propagate
+            Plague.naturalPropagate(territory);
+            //natural plague appear
+            Plague.naturalAppear(territory);
+            //natural plague disappear
+            Plague.naturalDisappear(territory);
+        }
 
         System.out.println("Illegal players: ");
         illegalPlayerSet.forEach(e -> System.out.println(e.getPlayerName()));

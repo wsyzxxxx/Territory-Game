@@ -19,37 +19,46 @@ public class Plague {
     public static void naturalAppear(Territory source) { //10%
         if (r.nextDouble() < naturalAppearProbability) {
             propagateToOneTerritory(source);
+            System.out.println("Plague naturally appears in " + source.getTerritoryName());
         }
     }
 
     public static void naturalPropagate(Territory source) { //20%
         //Random r = new Random();
+        if (!source.isPlagueMode() || source.isQuarantineMode()) return;
         for (Territory aim : source.getTerritoryNeighbors().values()) {
             if (r.nextDouble() < naturalPropagateProbability) {
                 propagateToOneTerritory(aim);
+                System.out.println("Plague naturally propagates to " + aim.getTerritoryName() + " from " + source.getTerritoryName());
             }
         }
     }
 
     public static void burst(Territory source) {
-        int unitsToKill = source.getTerritoryUnits() / burstSeverity;
-        source.randomKillUnits(unitsToKill);
+        if (source.isPlagueMode()) {
+            int unitsToKill = source.getTerritoryUnits() / burstSeverity + 1;
+            source.randomKillUnits(unitsToKill);
+            System.out.println("Plague bursts in " + source.getTerritoryName() + " and kills " + unitsToKill + " units");
+        }
     }
 
     public static void naturalDisappear(Territory source)  {//20%
         if (r.nextDouble() < disappearProbability) {
             forceDisappear(source);
+            System.out.println("Plague naturally disappears in " + source.getTerritoryName());
         }
     }
 
     public static void forceDisappear(Territory source) {
         source.setPlagueMode(false);
+        System.out.println("Plague eliminated in " + source.getTerritoryName());
     }
 
     public static void actionOrderPropagate(Territory source, Territory aim) { //50%
         //Random r = new Random();
         if (source.isPlagueMode() && r.nextDouble() < actionOrderPropagateProbability) {
             propagateToOneTerritory(aim);
+            System.out.println("Plague propagates to " + aim.getTerritoryName() + " from " + source.getTerritoryName() + "by action orders");
         }
     }
 

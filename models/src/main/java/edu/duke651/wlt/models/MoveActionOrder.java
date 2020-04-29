@@ -62,7 +62,10 @@ public class MoveActionOrder extends ActionOrder {
     public boolean checkLegal() {
         return player.getMinimumMoveSize(this.source, this.aim) != -1 &&
                player.getFoodResources() >= this.calculateFoodCost() &&
-               source.hasEnoughUnits(this.units);
+               source.hasEnoughUnits(this.units) &&
+                /*EVO3*/
+                !source.isQuarantineMode() &&
+                !aim.isQuarantineMode();
     }
 
     /**
