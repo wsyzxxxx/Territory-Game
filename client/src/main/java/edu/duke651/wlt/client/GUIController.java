@@ -4,6 +4,7 @@ import edu.duke651.wlt.models.*;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,9 +12,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
 import org.json.JSONException;
@@ -31,6 +34,7 @@ public class GUIController {
     private String playerName;
     private Text steps;
     private VBox vBox = new VBox();
+    private VBox vBox2 = new VBox();
 
     //orders
     private ArrayList<AttackActionOrder> attackActionOrders;
@@ -49,6 +53,9 @@ public class GUIController {
         this.primaryStage = primaryStage;
         this.vBox.setPrefSize(150,400);
         this.vBox.setStyle("-fx-background-color:#AEEEEE");
+        this.vBox2.setPrefSize(180,400);
+        this.vBox2.setStyle("-fx-background-color:#AEEEEE");
+        this.vBox2.setLayoutX(820);
 
         createName();
     }
@@ -73,16 +80,15 @@ public class GUIController {
         textField.setLayoutY(200);
         textField.setPromptText("Player Name");
 
-        confirm.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                playerName = textField.getText();
-                try {
-                    serverHandler = new ServerHandler(playerName);
-                    nextRound();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        confirm.setOnAction(actionEvent -> {
+            //steps.setText("Please wait for other users to connect...");
+            steps.textProperty().set("Please wait for other users to connect...");
+            playerName = textField.getText();
+            try {
+                serverHandler = new ServerHandler(playerName);
+                nextRound();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
         });
 
@@ -91,15 +97,15 @@ public class GUIController {
         primaryStage.show();
     }
 
-    public void nextRound() throws IOException {
+    public void nextRound() throws IOException, InterruptedException {
         attackActionOrders.clear();
         moveActionOrders.clear();
         upgradeTechOrders.clear();
         upgradeTechOrders.clear();
         vBox.getChildren().clear();
+        vBox2.getChildren().clear();
 
         try {
-            steps.setText("Waiting for other players...");
             //get the game info
             this.serverHandler.getResults(playerMap, territoryMap);
 
@@ -112,8 +118,10 @@ public class GUIController {
                 //lost prompt
                 steps.setText("You have lost, but you can continue watching the game.");
             }
+            this.primaryStage.show();
         } catch (IllegalStateException e) {
-            System.out.println("Game over! The winner is: " + e.getMessage());
+            steps.textProperty().set("Game over! The winner is: " + e.getMessage());
+            Thread.sleep(100000);
             this.primaryStage.close();
         } catch (JSONException e) {
             System.out.println("JSONException: " + e.getMessage());
@@ -123,7 +131,7 @@ public class GUIController {
         }
     }
 
-    public void finishThisRound() throws IOException {
+    public void finishThisRound() throws IOException, InterruptedException {
         ArrayList<Order> orders = new ArrayList<>();
         orders.addAll(attackActionOrders);
         orders.addAll(moveActionOrders);
@@ -160,16 +168,29 @@ public class GUIController {
             }
         });
 
-        confirm.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    finishThisRound();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        confirm.setOnAction(actionEvent -> {
+            steps.textProperty().set("Please wait for other users to finish this round...");
+            try {
+                finishThisRound();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
         });
+
+        playerMap.forEach((k, v) -> {
+            Rectangle rectangle = new Rectangle();
+            rectangle.setFill(Color.web(v.getColor()));
+            rectangle.setWidth(15);
+            rectangle.setHeight(15);
+            HBox hBox = new HBox();
+            hBox.getChildren().addAll(new Text(k + ": "), rectangle);
+            this.vBox2.getChildren().add(hBox);
+            this.vBox2.getChildren().add(new Text("Food: " + v.getFoodResources()));
+            this.vBox2.getChildren().add(new Text("Tech Resources: " + v.getTechResources()));
+            this.vBox2.getChildren().add(new Text("Current Tech Level: " + v.getTechLevel()));
+        });
+
+        this.vBox2.getChildren().addAll(new Text(), new Text(), new Text());
 
         territoryMap.forEach((k, v) -> {
             GUIController guiController = this;
@@ -194,11 +215,16 @@ public class GUIController {
 
             root.getChildren().add(polyline);
             root.getChildren().add(text);
+
+            HBox hBox = new HBox();
+            hBox.getChildren().addAll(new Text(k + ": "), new Text("  Size: " + v.getSize()), new Text("  Units: " + v.getTerritoryUnits()));
+            vBox2.getChildren().add(hBox);
         });
         root.getChildren().add(confirm);
         root.getChildren().add(tf);
         root.getChildren().add(vBox);
         root.getChildren().add(upgrade);
+        root.getChildren().add(vBox2);
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setHeight(600);
