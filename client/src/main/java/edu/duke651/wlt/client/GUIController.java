@@ -1,15 +1,16 @@
 package edu.duke651.wlt.client;
 
 import edu.duke651.wlt.models.*;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -49,12 +50,12 @@ public class GUIController {
         this.moveActionOrders = new ArrayList<>();
         this.upgradeUnitOrders = new ArrayList<>();
         this.upgradeTechOrders = new ArrayList<>();
-        this.steps = new Text("Territory");
+        this.steps = new Text();
         this.primaryStage = primaryStage;
         this.vBox.setPrefSize(150,400);
-        this.vBox.setStyle("-fx-background-color:#AEEEEE");
+        this.vBox.setStyle("-fx-background-color:#FEE790");
         this.vBox2.setPrefSize(180,400);
-        this.vBox2.setStyle("-fx-background-color:#AEEEEE");
+        this.vBox2.setStyle("-fx-background-color:#FEE790");
         this.vBox2.setLayoutX(820);
 
         createName();
@@ -81,15 +82,25 @@ public class GUIController {
         textField.setPromptText("Player Name");
 
         confirm.setOnAction(actionEvent -> {
-            //steps.setText("Please wait for other users to connect...");
-            steps.textProperty().set("Please wait for other users to connect...");
-            playerName = textField.getText();
-            try {
-                serverHandler = new ServerHandler(playerName);
-                nextRound();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            Task<Void> task = new Task<Void>() {
+                @Override
+                public Void call() {
+                    playerName = textField.getText();
+                    try {
+                        serverHandler = new ServerHandler(playerName);
+                        Platform.runLater(() -> {
+                            steps.setText("Please wait for other users to connect...");
+                            confirm.setDisable(true);
+                            textField.setDisable(true);
+                        });
+                        nextRound();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            };
+            new Thread(task).start();
         });
 
         root.getChildren().addAll(tf, confirm, textField);
@@ -97,32 +108,47 @@ public class GUIController {
         primaryStage.show();
     }
 
-    public void nextRound() throws IOException, InterruptedException {
+    public void nextRound() {
         attackActionOrders.clear();
         moveActionOrders.clear();
         upgradeTechOrders.clear();
-        upgradeTechOrders.clear();
-        vBox.getChildren().clear();
-        vBox2.getChildren().clear();
+        upgradeUnitOrders.clear();
 
         try {
             //get the game info
             this.serverHandler.getResults(playerMap, territoryMap);
 
-            renderScreen();
+            Platform.runLater(() -> {
+                vBox.getChildren().clear();
+                vBox2.getChildren().clear();
 
-            //judge if the player has lose
-            if (!this.playerMap.get(playerName).getTerritories().isEmpty()) {
-                steps.setText("New round, take your actions!");
-            } else {
-                //lost prompt
-                steps.setText("You have lost, but you can continue watching the game.");
-            }
-            this.primaryStage.show();
+                renderScreen();
+
+                //judge if the player has lose
+                if (!this.playerMap.get(playerName).getTerritories().isEmpty()) {
+                    steps.setText("New round, take your actions!");
+                } else {
+                    steps.setText("You have lost, but you can continue watching the game.");
+                    nextRound();
+                }
+            });
         } catch (IllegalStateException e) {
-            steps.textProperty().set("Game over! The winner is: " + e.getMessage());
-            Thread.sleep(100000);
-            this.primaryStage.close();
+            Platform.runLater(() -> {
+                vBox.getChildren().clear();
+                vBox2.getChildren().clear();
+                renderScreen();
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Game over!");
+                alert.setHeaderText("Game over, the winner is");
+                alert.setContentText(e.getMessage());
+
+                alert.setOnCloseRequest(dialogEvent -> {
+                    primaryStage.close();
+                    Platform.exit();
+                });
+                alert.show();
+            });
         } catch (JSONException e) {
             System.out.println("JSONException: " + e.getMessage());
         } catch (Exception e) {
@@ -137,8 +163,35 @@ public class GUIController {
         orders.addAll(moveActionOrders);
         orders.addAll(upgradeUnitOrders);
         orders.addAll(upgradeTechOrders);
-        this.serverHandler.sendOrders(orders);
+
+        serverHandler.sendOrders(orders);
+        System.out.println("to next round");
         nextRound();
+    }
+
+    public void refreshVBox2() {
+        vBox2.getChildren().clear();
+
+        playerMap.forEach((k, v) -> {
+            Rectangle rectangle = new Rectangle();
+            rectangle.setFill(Color.web(v.getColor()));
+            rectangle.setWidth(15);
+            rectangle.setHeight(15);
+            HBox hBox = new HBox();
+            hBox.getChildren().addAll(new Text("  " + k + ": "), rectangle);
+            this.vBox2.getChildren().add(hBox);
+            this.vBox2.getChildren().add(new Text("  Food: " + v.getFoodResources()));
+            this.vBox2.getChildren().add(new Text("  Tech Resources: " + v.getTechResources()));
+            this.vBox2.getChildren().add(new Text("  Current Tech Level: " + v.getTechLevel()));
+            this.vBox2.getChildren().add(new Text());
+        });
+        this.vBox2.getChildren().addAll(new Text(), new Text());
+
+        territoryMap.forEach((k, v) -> {
+            HBox hBox = new HBox();
+            hBox.getChildren().addAll(new Text("  " + k + ": "), new Text("  Size: " + v.getSize()), new Text("  Units: " + v.getTerritoryUnits()));
+            vBox2.getChildren().add(hBox);
+        });
     }
 
     public void renderScreen() {
@@ -163,18 +216,42 @@ public class GUIController {
         upgrade.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                vBox.getChildren().add(new Text("Upgrade Technology level"));
-                upgradeTechOrders.add(new UpgradeTechOrder(playerMap.get(playerName)));
+                UpgradeTechOrder upgradeTechOrder = new UpgradeTechOrder(playerMap.get(playerName));
+                if (!upgradeTechOrder.checkLegal()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Illegal Order!");
+                    alert.setHeaderText("Illegal Order, please check your input!");
+                    //alert.setContentText(e.getMessage());
+
+                    alert.showAndWait();
+                } else {
+                    upgradeTechOrder.execute();
+                    upgradeTechOrders.add(upgradeTechOrder);
+                    vBox.getChildren().add(new Text("Upgrade Technology level"));
+                    refreshVBox2();
+                }
             }
         });
 
         confirm.setOnAction(actionEvent -> {
-            steps.textProperty().set("Please wait for other users to finish this round...");
-            try {
-                finishThisRound();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            Task<Void> task = new Task<Void>() {
+                @Override
+                public Void call() {
+                    try {
+                        Platform.runLater(() -> {
+                            steps.setText("Please wait for other users to finish this round...");
+                            confirm.setDisable(true);
+                            upgrade.setDisable(true);
+
+                        });
+                        finishThisRound();
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            };
+            new Thread(task).start();
         });
 
         playerMap.forEach((k, v) -> {
@@ -183,47 +260,52 @@ public class GUIController {
             rectangle.setWidth(15);
             rectangle.setHeight(15);
             HBox hBox = new HBox();
-            hBox.getChildren().addAll(new Text(k + ": "), rectangle);
+            hBox.getChildren().addAll(new Text("  " + k + ": "), rectangle);
             this.vBox2.getChildren().add(hBox);
-            this.vBox2.getChildren().add(new Text("Food: " + v.getFoodResources()));
-            this.vBox2.getChildren().add(new Text("Tech Resources: " + v.getTechResources()));
-            this.vBox2.getChildren().add(new Text("Current Tech Level: " + v.getTechLevel()));
+            this.vBox2.getChildren().add(new Text("  Food: " + v.getFoodResources()));
+            this.vBox2.getChildren().add(new Text("  Tech Resources: " + v.getTechResources()));
+            this.vBox2.getChildren().add(new Text("  Current Tech Level: " + v.getTechLevel()));
+            this.vBox2.getChildren().add(new Text());
         });
-
-        this.vBox2.getChildren().addAll(new Text(), new Text(), new Text());
+        this.vBox2.getChildren().addAll(new Text(), new Text());
 
         territoryMap.forEach((k, v) -> {
             GUIController guiController = this;
             Polyline polyline = ServerSetting.TERRITORY_POLY_MAP.get(k);
+            polyline.setOnMouseClicked(null);
             polyline.setFill(Color.valueOf(v.getTerritoryOwner().getColor()));
             Text text = new Text(k);
             text.setFont(Font.font("Arial", FontWeight.BOLD, 20));
             text.setX(ServerSetting.NAME_ON_MAP.get(k).getKey());
             text.setY(ServerSetting.NAME_ON_MAP.get(k).getValue());
 
-            //mouse event
-            if (v.getTerritoryOwner() == playerMap.get(playerName)) {
-                polyline.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    //click mouse action
-                    public void handle(MouseEvent mouseEvent) {
-                        ActionMenu g = new ActionMenu(v, guiController);
-                        g.show(polyline, Side.RIGHT, -50, 50);
-                    }
-                });
+            if (!this.playerMap.get(playerName).getTerritories().isEmpty()) {
+                //mouse event
+                if (v.getTerritoryOwner() == playerMap.get(playerName)) {
+                    polyline.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        //click mouse action
+                        public void handle(MouseEvent mouseEvent) {
+                            ActionMenu g = new ActionMenu(v, guiController);
+                            g.show(polyline, Side.RIGHT, -50, 50);
+                        }
+                    });
+                }
             }
 
             root.getChildren().add(polyline);
             root.getChildren().add(text);
 
             HBox hBox = new HBox();
-            hBox.getChildren().addAll(new Text(k + ": "), new Text("  Size: " + v.getSize()), new Text("  Units: " + v.getTerritoryUnits()));
+            hBox.getChildren().addAll(new Text("  " + k + ": "), new Text("  Size: " + v.getSize()), new Text("  Units: " + v.getTerritoryUnits()));
             vBox2.getChildren().add(hBox);
         });
-        root.getChildren().add(confirm);
+        if (!this.playerMap.get(playerName).getTerritories().isEmpty()) {
+            root.getChildren().add(confirm);
+            root.getChildren().add(upgrade);
+        }
         root.getChildren().add(tf);
         root.getChildren().add(vBox);
-        root.getChildren().add(upgrade);
         root.getChildren().add(vBox2);
 
         primaryStage.setScene(new Scene(root));
@@ -286,11 +368,27 @@ public class GUIController {
         confirm.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                ArrayList<Integer> unitList = new ArrayList<>();
-                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
-                attackActionOrders.add(new AttackActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList));
-                vBox.getChildren().add(new Text("Attack: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
-                menuStage.close();
+                try {
+                    ArrayList<Integer> unitList = new ArrayList<>();
+                    textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
+                    AttackActionOrder attackActionOrder = new AttackActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList);
+                    if (!attackActionOrder.checkLegal()) {
+                        throw new IllegalArgumentException();
+                    }
+                    attackActionOrder.moveOut();
+                    attackActionOrder.getPlayer().consumeFoodResource(attackActionOrder.calculateFoodCost());
+                    attackActionOrders.add(attackActionOrder);
+                    vBox.getChildren().add(new Text("Attack: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
+                    menuStage.close();
+                    refreshVBox2();
+                } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Illegal Order!");
+                    alert.setHeaderText("Illegal Order, please check your input!");
+                    //alert.setContentText(e.getMessage());
+
+                    alert.showAndWait();
+                }
             }
         });
     }
@@ -348,11 +446,27 @@ public class GUIController {
         confirm.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                ArrayList<Integer> unitList = new ArrayList<>();
-                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
-                moveActionOrders.add(new MoveActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList));
-                vBox.getChildren().add(new Text("Move: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
-                menuStage.close();
+                try {
+                    ArrayList<Integer> unitList = new ArrayList<>();
+                    textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
+                    MoveActionOrder moveActionOrder = new MoveActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList);
+                    if (!moveActionOrder.checkLegal()) {
+                        throw new IllegalArgumentException();
+                    }
+                    moveActionOrder.moveOut();
+                    moveActionOrder.getPlayer().consumeFoodResource(moveActionOrder.calculateFoodCost());
+                    moveActionOrders.add(moveActionOrder);
+                    vBox.getChildren().add(new Text("Move: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
+                    menuStage.close();
+                    refreshVBox2();
+                } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Illegal Order!");
+                    alert.setHeaderText("Illegal Order, please check your input!");
+                    //alert.setContentText(e.getMessage());
+
+                    alert.showAndWait();
+                }
             }
         });
     }
@@ -406,11 +520,26 @@ public class GUIController {
         confirm.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                ArrayList<Integer> unitList = new ArrayList<>();
-                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
-                upgradeUnitOrders.add(new UpgradeUnitOrder(territory, unitList));
-                vBox.getChildren().add(new Text("Upgrade: in " + territory.getTerritoryName()));
-                menuStage.close();
+                try {
+                    ArrayList<Integer> unitList = new ArrayList<>();
+                    textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
+                    UpgradeUnitOrder upgradeUnitOrder = new UpgradeUnitOrder(territory, unitList);
+                    if (!upgradeUnitOrder.checkLegal()) {
+                        throw new IllegalArgumentException();
+                    }
+                    upgradeUnitOrder.execute();
+                    upgradeUnitOrders.add(upgradeUnitOrder);
+                    vBox.getChildren().add(new Text("Upgrade: in " + territory.getTerritoryName()));
+                    menuStage.close();
+                    refreshVBox2();
+                } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Illegal Order!");
+                    alert.setHeaderText("Illegal Order, please check your input!");
+                    //alert.setContentText(e.getMessage());
+
+                    alert.showAndWait();
+                }
             }
         });
     }

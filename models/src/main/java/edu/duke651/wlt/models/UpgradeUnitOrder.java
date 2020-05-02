@@ -85,11 +85,16 @@ public class UpgradeUnitOrder extends Order{
     @Override
     public void execute() {
         this.player.consumeTechResource(calculateTechCost());
-        this.source.setTerritoryUnitsInLevel(this.unitsAfterUpdate);
+        this.source.setTerritoryUnitsInLevel(new ArrayList<>(this.unitsAfterUpdate));
     }
 
     @Override
     public boolean checkLegal() {
+        for (int i : unitsAfterUpdate) {
+            if (i < 0) {
+                return false;
+            }
+        }
         return this.player.getTechResources() >= calculateTechCost() &&
                getRequireLevel() <= this.player.getTechLevel() &&
                calculateTechCost() >= 0 &&

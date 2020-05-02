@@ -123,6 +123,11 @@ public class AttackActionOrder extends ActionOrder {
     */
     @Override
     public boolean checkLegal() {
+        for (int i : units) {
+            if (i < 0) {
+                return false;
+            }
+        }
         return this.source.checkNeighbor(aim) &&
                this.source.getTerritoryOwner() == this.player &&
                this.aim.getTerritoryOwner() != this.player &&

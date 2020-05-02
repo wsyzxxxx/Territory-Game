@@ -85,19 +85,19 @@ public class Player {
         if (source.getTerritoryOwner() != this || aim.getTerritoryOwner() != this)
             return -1;
         //BFS to search the destination
-        Queue<Pair<Territory, Integer>> territoryQueue = new LinkedList<>();
+        Queue<Territory> territoryQueue = new LinkedList<>();
         Map<Territory, Integer> visitedTerritory = new HashMap<>();
-        territoryQueue.add(new Pair<>(source, source.getSize()));
+        territoryQueue.add(source);
         visitedTerritory.put(source, source.getSize());
 
         while (!territoryQueue.isEmpty()) {
-            Pair<Territory, Integer> curr = territoryQueue.poll();
-
-            for (Territory territory : curr.getKey().getTerritoryNeighbors().values()) {
+            Territory curr = territoryQueue.poll();
+            System.out.println(curr.getTerritoryName() + " " + visitedTerritory.get(curr));
+            for (Territory territory : curr.getTerritoryNeighbors().values()) {
                 if (territory.getTerritoryOwner() == this &&
-                    (!visitedTerritory.containsKey(territory) || visitedTerritory.get(territory) > curr.getValue() + territory.getSize())) {
-                    visitedTerritory.put(territory, curr.getValue() + territory.getSize());
-                    territoryQueue.add(new Pair<>(territory, curr.getValue() + territory.getSize()));
+                    (!visitedTerritory.containsKey(territory) || visitedTerritory.get(territory) > visitedTerritory.get(curr) + territory.getSize())) {
+                    visitedTerritory.put(territory, visitedTerritory.get(curr) + territory.getSize());
+                    territoryQueue.add(territory);
                 }
             }
         }

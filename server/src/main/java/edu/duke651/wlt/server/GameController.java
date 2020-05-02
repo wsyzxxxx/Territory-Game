@@ -134,6 +134,7 @@ public class GameController {
                     if (upgradeTechOrder.checkLegal()) {
                         needTech += upgradeTechOrder.getTechCost();
                     } else {
+                        System.out.println("Illegal tech order " + upgradeTechOrder.serialize().toString());
                         illegalPlayerSet.add(player);
                     }
                 }
@@ -143,11 +144,13 @@ public class GameController {
                     if (upgradeUnitOrder.checkLegal()) {
                         needTech += upgradeUnitOrder.getTechCost();
                     } else {
+                        System.out.println("Illegal upgrade order " + upgradeUnitOrder.serialize().toString());
                         illegalPlayerSet.add(player);
                     }
                 }
             }
             if (needTech > player.getTechResources()) {
+                System.out.println("No enough tech " + player.getPlayerName());
                 illegalPlayerSet.add(player);
             }
         }
@@ -162,11 +165,13 @@ public class GameController {
             if (illegalPlayerSet.contains(territory.getTerritoryOwner())) continue;
             ArrayList<Integer> needUnits = new ArrayList<>(Collections.nCopies(7, 0));
             for (ActionOrder actionOrder : allActionOrders) {
-                if (!actionOrder.checkLegal()) {
-                    illegalPlayerSet.add(territory.getTerritoryOwner());
-                    break;
-                }
                 if (territory == actionOrder.getSource()) {
+                    if (!actionOrder.checkLegal()) {
+                        System.out.println("Illegal action order " + actionOrder.serialize().toString());
+                        illegalPlayerSet.add(territory.getTerritoryOwner());
+                        break;
+                    }
+
                     ArrayList<Integer> units = actionOrder.getUnits();
                     for (int i = 0; i < needUnits.size(); i++) {
                         needUnits.set(i, needUnits.get(i) + units.get(i));
@@ -286,6 +291,7 @@ public class GameController {
         Random random = new Random();
         ArrayList<String> colorArray = new ArrayList<>(Arrays.asList(ServerSetting.COLOR_SET));
         for (Player player: players.values()) {
+            player.setFoodResources(ServerSetting.INIT_FOOD_RESOURCE_HOLD);
             //assign color
             player.setColor(colorArray.get(random.nextInt(colorArray.size())));
             colorArray.remove(player.getColor());

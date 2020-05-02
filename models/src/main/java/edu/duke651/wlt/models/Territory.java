@@ -209,6 +209,7 @@ public class Territory {
     public JSONObject serialize() {
         JSONObject territoryItem = new JSONObject();
         territoryItem.put("name", this.territoryName);
+        territoryItem.put("size", this.size);
         JSONArray neighbourList = new JSONArray();
         this.territoryNeighbors.keySet().forEach(neighbourList::put);
         territoryItem.put("neighbours", neighbourList);
@@ -228,6 +229,7 @@ public class Territory {
      */
     public static Territory deserialize(JSONObject territoryObject) throws JSONException {
         Territory territory = new Territory(territoryObject.getString("name"));
+        territory.setSize(territoryObject.getInt("size"));
         JSONArray unitArray = territoryObject.getJSONArray("unitList");
         for (int i = 0; i < 7; i++) {
             territory.territoryUnitsInLevel.set(i, unitArray.getInt(i));
