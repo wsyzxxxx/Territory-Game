@@ -10,9 +10,9 @@ import java.net.Socket;
  * @create: 2020-04-09 11:55
  **/
 public class LinkInfo {
-    private Socket socket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
+    private final Socket socket;
+    private final BufferedReader bufferedReader;
+    private final BufferedWriter bufferedWriter;
     private String playerName;
 
     /**
@@ -24,6 +24,7 @@ public class LinkInfo {
     */
     public LinkInfo(Socket socket) throws IOException {
         this.socket = socket;
+        this.socket.setSoTimeout(1_000_000);
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
@@ -61,10 +62,6 @@ public class LinkInfo {
         this.bufferedWriter.newLine();
         this.bufferedWriter.flush();
         System.out.println("Send message! " + message);
-    }
-
-    public boolean isAlive() {
-        return !this.socket.isClosed();
     }
 
     /**

@@ -2,16 +2,11 @@ package edu.duke651.wlt.client;
 
 import edu.duke651.wlt.models.*;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -28,40 +23,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GUIController {
-    private Stage primaryStage;
+    private final Stage primaryStage;
     private ServerHandler serverHandler;
-    private Map<String, Player> playerMap;
-    private Map<String, Territory> territoryMap;
+    private final Map<String, Player> playerMap;
+    private final Map<String, Territory> territoryMap;
     private String playerName;
-    private Text steps;
-    private VBox vBox = new VBox();
-    private VBox vBox2 = new VBox();
+    private final Text steps = new Text();
+    private final VBox vBox = new VBox();
+    private final VBox vBox2 = new VBox();
 
     //orders
-    private ArrayList<AttackActionOrder> attackActionOrders;
-    private ArrayList<MoveActionOrder> moveActionOrders;
-    private ArrayList<UpgradeUnitOrder> upgradeUnitOrders;
-    private ArrayList<UpgradeTechOrder> upgradeTechOrders;
+    private final ArrayList<AttackActionOrder> attackActionOrders;
+    private final ArrayList<MoveActionOrder> moveActionOrders;
+    private final ArrayList<UpgradeUnitOrder> upgradeUnitOrders;
+    private final ArrayList<UpgradeTechOrder> upgradeTechOrders;
 
-    public GUIController(Stage primaryStage) throws IOException {
+    public GUIController(Stage primaryStage) {
         this.playerMap = new HashMap<>();
         this.territoryMap = new TerritoryMapInit().getMap();
         this.attackActionOrders = new ArrayList<>();
         this.moveActionOrders = new ArrayList<>();
         this.upgradeUnitOrders = new ArrayList<>();
         this.upgradeTechOrders = new ArrayList<>();
-        this.steps = new Text();
         this.primaryStage = primaryStage;
         this.vBox.setPrefSize(150,400);
         this.vBox.setStyle("-fx-background-color:#FEE790");
         this.vBox2.setPrefSize(180,400);
         this.vBox2.setStyle("-fx-background-color:#FEE790");
         this.vBox2.setLayoutX(820);
-
-        createName();
     }
 
-    public void createName() {
+    public void startGame() {
         AnchorPane root = new AnchorPane();
 
         steps.setText("Please input your name:");
@@ -82,7 +74,7 @@ public class GUIController {
         textField.setPromptText("Player Name");
 
         confirm.setOnAction(actionEvent -> {
-            Task<Void> task = new Task<Void>() {
+            Task<Void> task = new Task<>() {
                 @Override
                 public Void call() {
                     playerName = textField.getText();
@@ -157,7 +149,7 @@ public class GUIController {
         }
     }
 
-    public void finishThisRound() throws IOException, InterruptedException {
+    public void finishThisRound() throws IOException {
         ArrayList<Order> orders = new ArrayList<>();
         orders.addAll(attackActionOrders);
         orders.addAll(moveActionOrders);
@@ -165,7 +157,6 @@ public class GUIController {
         orders.addAll(upgradeTechOrders);
 
         serverHandler.sendOrders(orders);
-        System.out.println("to next round");
         nextRound();
     }
 
@@ -213,28 +204,24 @@ public class GUIController {
         upgrade.setLayoutX(20);
         upgrade.setLayoutY(420);
 
-        upgrade.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                UpgradeTechOrder upgradeTechOrder = new UpgradeTechOrder(playerMap.get(playerName));
-                if (!upgradeTechOrder.checkLegal()) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Illegal Order!");
-                    alert.setHeaderText("Illegal Order, please check your input!");
-                    //alert.setContentText(e.getMessage());
+        upgrade.setOnAction(actionEvent -> {
+            UpgradeTechOrder upgradeTechOrder = new UpgradeTechOrder(playerMap.get(playerName));
+            if (!upgradeTechOrder.checkLegal()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Illegal Order!");
+                alert.setHeaderText("Illegal Order, please check your input!");
 
-                    alert.showAndWait();
-                } else {
-                    upgradeTechOrder.execute();
-                    upgradeTechOrders.add(upgradeTechOrder);
-                    vBox.getChildren().add(new Text("Upgrade Technology level"));
-                    refreshVBox2();
-                }
+                alert.showAndWait();
+            } else {
+                upgradeTechOrder.execute();
+                upgradeTechOrders.add(upgradeTechOrder);
+                vBox.getChildren().add(new Text("Upgrade Technology level"));
+                refreshVBox2();
             }
         });
 
         confirm.setOnAction(actionEvent -> {
-            Task<Void> task = new Task<Void>() {
+            Task<Void> task = new Task<>() {
                 @Override
                 public Void call() {
                     try {
@@ -242,10 +229,10 @@ public class GUIController {
                             steps.setText("Please wait for other users to finish this round...");
                             confirm.setDisable(true);
                             upgrade.setDisable(true);
-
+                            ServerSetting.TERRITORY_POLY_MAP.values().forEach(e -> e.setOnMouseClicked(null));
                         });
                         finishThisRound();
-                    } catch (IOException | InterruptedException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                     return null;
@@ -282,13 +269,10 @@ public class GUIController {
             if (!this.playerMap.get(playerName).getTerritories().isEmpty()) {
                 //mouse event
                 if (v.getTerritoryOwner() == playerMap.get(playerName)) {
-                    polyline.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        //click mouse action
-                        public void handle(MouseEvent mouseEvent) {
-                            ActionMenu g = new ActionMenu(v, guiController);
-                            g.show(polyline, Side.RIGHT, -50, 50);
-                        }
+                    //click mouse action
+                    polyline.setOnMouseClicked(mouseEvent -> {
+                        ActionMenu g = new ActionMenu(v, guiController);
+                        g.show(polyline, Side.RIGHT, -50, 50);
                     });
                 }
             }
@@ -359,36 +343,28 @@ public class GUIController {
         menuStage.setTitle("wlt-RISC");
         menuStage.show();
 
-        cancel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                menuStage.close();
-            }
-        });
-        confirm.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    ArrayList<Integer> unitList = new ArrayList<>();
-                    textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
-                    AttackActionOrder attackActionOrder = new AttackActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList);
-                    if (!attackActionOrder.checkLegal()) {
-                        throw new IllegalArgumentException();
-                    }
-                    attackActionOrder.moveOut();
-                    attackActionOrder.getPlayer().consumeFoodResource(attackActionOrder.calculateFoodCost());
-                    attackActionOrders.add(attackActionOrder);
-                    vBox.getChildren().add(new Text("Attack: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
-                    menuStage.close();
-                    refreshVBox2();
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Illegal Order!");
-                    alert.setHeaderText("Illegal Order, please check your input!");
-                    //alert.setContentText(e.getMessage());
-
-                    alert.showAndWait();
+        cancel.setOnAction(actionEvent -> menuStage.close());
+        confirm.setOnAction(actionEvent -> {
+            try {
+                ArrayList<Integer> unitList = new ArrayList<>();
+                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
+                AttackActionOrder attackActionOrder = new AttackActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList);
+                if (!attackActionOrder.checkLegal()) {
+                    throw new IllegalArgumentException();
                 }
+                attackActionOrder.moveOut();
+                attackActionOrder.getPlayer().consumeFoodResource(attackActionOrder.calculateFoodCost());
+                attackActionOrders.add(attackActionOrder);
+                vBox.getChildren().add(new Text("Attack: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
+                menuStage.close();
+                refreshVBox2();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Illegal Order!");
+                alert.setHeaderText("Illegal Order, please check your input!");
+                //alert.setContentText(e.getMessage());
+
+                alert.showAndWait();
             }
         });
     }
@@ -437,36 +413,28 @@ public class GUIController {
         menuStage.setTitle("wlt-RISC");
         menuStage.show();
 
-        cancel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                menuStage.close();
-            }
-        });
-        confirm.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    ArrayList<Integer> unitList = new ArrayList<>();
-                    textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
-                    MoveActionOrder moveActionOrder = new MoveActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList);
-                    if (!moveActionOrder.checkLegal()) {
-                        throw new IllegalArgumentException();
-                    }
-                    moveActionOrder.moveOut();
-                    moveActionOrder.getPlayer().consumeFoodResource(moveActionOrder.calculateFoodCost());
-                    moveActionOrders.add(moveActionOrder);
-                    vBox.getChildren().add(new Text("Move: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
-                    menuStage.close();
-                    refreshVBox2();
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Illegal Order!");
-                    alert.setHeaderText("Illegal Order, please check your input!");
-                    //alert.setContentText(e.getMessage());
-
-                    alert.showAndWait();
+        cancel.setOnAction(actionEvent -> menuStage.close());
+        confirm.setOnAction(actionEvent -> {
+            try {
+                ArrayList<Integer> unitList = new ArrayList<>();
+                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
+                MoveActionOrder moveActionOrder = new MoveActionOrder(playerMap.get(playerName), territory, territoryMap.get(choiceBox.getSelectionModel().getSelectedItem()), unitList);
+                if (!moveActionOrder.checkLegal()) {
+                    throw new IllegalArgumentException();
                 }
+                moveActionOrder.moveOut();
+                moveActionOrder.getPlayer().consumeFoodResource(moveActionOrder.calculateFoodCost());
+                moveActionOrders.add(moveActionOrder);
+                vBox.getChildren().add(new Text("Move: from " + territory.getTerritoryName() + " to " + choiceBox.getSelectionModel().getSelectedItem()));
+                menuStage.close();
+                refreshVBox2();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Illegal Order!");
+                alert.setHeaderText("Illegal Order, please check your input!");
+                //alert.setContentText(e.getMessage());
+
+                alert.showAndWait();
             }
         });
     }
@@ -511,35 +479,26 @@ public class GUIController {
         menuStage.setTitle("wlt-RISC");
         menuStage.show();
 
-        cancel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                menuStage.close();
-            }
-        });
-        confirm.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    ArrayList<Integer> unitList = new ArrayList<>();
-                    textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
-                    UpgradeUnitOrder upgradeUnitOrder = new UpgradeUnitOrder(territory, unitList);
-                    if (!upgradeUnitOrder.checkLegal()) {
-                        throw new IllegalArgumentException();
-                    }
-                    upgradeUnitOrder.execute();
-                    upgradeUnitOrders.add(upgradeUnitOrder);
-                    vBox.getChildren().add(new Text("Upgrade: in " + territory.getTerritoryName()));
-                    menuStage.close();
-                    refreshVBox2();
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Illegal Order!");
-                    alert.setHeaderText("Illegal Order, please check your input!");
-                    //alert.setContentText(e.getMessage());
-
-                    alert.showAndWait();
+        cancel.setOnAction(actionEvent -> menuStage.close());
+        confirm.setOnAction(actionEvent -> {
+            try {
+                ArrayList<Integer> unitList = new ArrayList<>();
+                textFields.forEach(textField -> unitList.add(Integer.valueOf(textField.getText().trim())));
+                UpgradeUnitOrder upgradeUnitOrder = new UpgradeUnitOrder(territory, unitList);
+                if (!upgradeUnitOrder.checkLegal()) {
+                    throw new IllegalArgumentException();
                 }
+                upgradeUnitOrder.execute();
+                upgradeUnitOrders.add(upgradeUnitOrder);
+                vBox.getChildren().add(new Text("Upgrade: in " + territory.getTerritoryName()));
+                menuStage.close();
+                refreshVBox2();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Illegal Order!");
+                alert.setHeaderText("Illegal Order, please check your input!");
+
+                alert.showAndWait();
             }
         });
     }
