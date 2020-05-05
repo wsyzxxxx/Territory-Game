@@ -188,6 +188,8 @@ public class GUIController {
     public void renderScreen() {
         AnchorPane root = new AnchorPane();
 
+
+
         steps.setText("Territory");
         steps.setTextAlignment(TextAlignment.CENTER);
         steps.setFont(Font.font(30));

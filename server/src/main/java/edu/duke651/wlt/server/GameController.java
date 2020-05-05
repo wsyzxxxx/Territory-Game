@@ -64,11 +64,15 @@ public class GameController {
     * @Date: 2020/4/13
     */
     private void endGame() throws IOException {
-        //send finish message
-       for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
-           messageSender.sendFinishMessage(linkInfo, players.values().iterator().next().getPlayerName());
-           linkInfo.closeLink();
-       }
+        if (playerLinkInfoHashMap.size() == 1) {
+            messageSender.sendFinishMessage(playerLinkInfoHashMap.values().iterator().next(), playerLinkInfoHashMap.keySet().iterator().next().getPlayerName());
+        } else {
+            //send finish message
+            for (LinkInfo linkInfo : playerLinkInfoHashMap.values()) {
+                messageSender.sendFinishMessage(linkInfo, players.values().iterator().next().getPlayerName());
+                linkInfo.closeLink();
+            }
+        }
     }
 
     /**
@@ -276,7 +280,7 @@ public class GameController {
     * @Date: 2020/4/13
     */
     private boolean isGameOver() {
-        return players.size() == 1 || playerLinkInfoHashMap.isEmpty();
+        return players.size() == 1 || playerLinkInfoHashMap.isEmpty() || playerLinkInfoHashMap.size() == 1;
     }
 
     /**
